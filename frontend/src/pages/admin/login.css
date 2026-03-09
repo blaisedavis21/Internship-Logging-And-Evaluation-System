@@ -66,3 +66,16 @@
     margin-right: auto;
     margin-bottom: 1.25rem;
 }
+.login-logo-icon {
+    width: 2rem;
+    height: 2rem;
+    color: hsl(var(--background));
+}
+
+.login-title {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+    letter-spacing: -0.025em;
+}
