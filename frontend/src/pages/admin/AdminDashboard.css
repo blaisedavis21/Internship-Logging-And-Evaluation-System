@@ -161,3 +161,16 @@
   height: 0.625rem;
   border-radius: 9999px;
 }
+
+.chart-legend-label {
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+
+.table-header-box {
+  padding: 1.5rem;
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
