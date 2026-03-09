@@ -1,0 +1,12 @@
+/* Login.css */
+
+.login-container {
+    min-height: 100vh;
+    background-color: hsl(var(--background));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+}
