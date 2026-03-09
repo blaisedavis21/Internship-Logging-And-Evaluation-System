@@ -138,3 +138,15 @@
   color: hsl(var(--foreground));
   margin-bottom: 0.25rem;
 }
+.chart-header-subtitle {
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  margin-bottom: 1rem;
+}
+
+.chart-legend-box {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
