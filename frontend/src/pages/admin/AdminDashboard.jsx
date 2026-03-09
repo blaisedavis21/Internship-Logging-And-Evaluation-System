@@ -6,6 +6,7 @@ import { Users, Building2, FileText, Award, TrendingUp, AlertCircle, ArrowUpRigh
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import "./AdminDashboard.css";
 
+
 const AdminDashboard = () => {
     const totalStudents = mockUsers.filter((u) => u.role === "student").length;
     const activePlacements = mockPlacements.filter((p) => p.status === "active").length;
