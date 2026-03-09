@@ -104,3 +104,15 @@
   color: hsl(var(--muted-foreground));
   margin-top: 0.25rem;
 }
+.stat-change-text {
+  font-size: 10px;
+  color: hsl(var(--accent));
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+.admin-charts-layout {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
