@@ -81,3 +81,14 @@
   align-items: center;
   justify-content: center;
 }
+.stat-icon-container svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: white;
+}
+
+.stat-arrow {
+  width: 1rem;
+  height: 1rem;
+  color: hsl(var(--muted-foreground));
+}
