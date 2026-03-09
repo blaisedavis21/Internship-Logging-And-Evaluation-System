@@ -116,3 +116,14 @@
   gap: 1rem;
   margin-bottom: 2rem;
 }
+@media (min-width: 640px) {
+  .admin-charts-layout {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .admin-charts-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
