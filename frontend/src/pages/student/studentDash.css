@@ -22,3 +22,16 @@
     width: 0.9rem;
     height: 0.9rem;
   }
+  .student-dash-title {
+    font-size: 2.1rem;
+    line-height: 1.1;
+    font-weight: 700;
+    color: #f9fafb;
+    letter-spacing: -0.03em;
+  }
+  
+  .student-dash-subtitle {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
