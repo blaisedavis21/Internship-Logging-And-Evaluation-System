@@ -91,6 +91,8 @@ export const mockPlacements = [
     startDate: "2026-01-01",
     endDate: "2026-04-30",
     status: "active",
+    workplaceSupervisor: "Jane Workplace Supervisor",
+    academicSupervisor: "Dr. Academic Supervisor",
   },
 ];
 
