@@ -1,207 +1,248 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
-import { roleLabels } from "@/data/mockData";
+import { useAuth } from "../contexts/AuthContext";
+import { UserRole, roleLabels } from "../data/mockData";
 import { motion } from "framer-motion";
-import { BookOpen, GraduationCap, Briefcase, Shield, ArrowRight, Sparkles, Eye, EyeOff, AlertCircle, CheckCircle2 } from "lucide-react";
-import "./SignUp.css";
+import {
+  BookOpen,
+  GraduationCap,
+  Briefcase,
+  Shield,
+  ArrowRight,
+  Sparkles,
+  Eye,
+  EyeOff,
+  AlertCircle,
+  CheckCircle2,
+} from "lucide-react";
+import "./signup.css";
 
 const roleConfig = [
-    { role: "student", icon: GraduationCap, description: "Submit logbooks, track progress, view scores", gradient: "from-blue-500 to-cyan-400", glow: "glow-blue" },
-    { role: "workplace_supervisor", icon: Briefcase, description: "Review logs, approve submissions, evaluate students", gradient: "from-emerald-500 to-teal-400", glow: "glow-emerald" },
-    { role: "academic_supervisor", icon: BookOpen, description: "Monitor progress, submit academic evaluations", gradient: "from-violet-500 to-purple-400", glow: "glow-violet" },
-    { role: "admin", icon: Shield, description: "Manage placements, oversee system, generate reports", gradient: "from-amber-500 to-orange-400", glow: "glow-gold" },
+  {
+    role: UserRole.STUDENT,
+    icon: GraduationCap,
+    description: "Submit logbooks, track progress, view scores",
+    accentClass: "role-accent-blue",
+  },
+  {
+    role: UserRole.WORKPLACE_SUPERVISOR,
+    icon: Briefcase,
+    description: "Review logs, approve submissions, evaluate students",
+    accentClass: "role-accent-emerald",
+  },
+  {
+    role: UserRole.ACADEMIC_SUPERVISOR,
+    icon: BookOpen,
+    description: "Monitor progress and academic evaluations",
+    accentClass: "role-accent-violet",
+  },
+  {
+    role: UserRole.ADMIN,
+    icon: Shield,
+    description: "Manage placements, users and reports",
+    accentClass: "role-accent-gold",
+  },
 ];
 
 const rolePaths = {
-    student: "/student",
-    workplace_supervisor: "/supervisor/workplace",
-    academic_supervisor: "/supervisor/academic",
-    admin: "/admin",
+  [UserRole.STUDENT]: "/student",
+  [UserRole.WORKPLACE_SUPERVISOR]: "/supervisor/workplace",
+  [UserRole.ACADEMIC_SUPERVISOR]: "/supervisor/academic",
+  [UserRole.ADMIN]: "/admin",
 };
 
 const SignUp = () => {
-    const { signUp } = useAuth();
-    const navigate = useNavigate();
-    const [selected, setSelected] = useState(null);
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [showPass, setShowPass] = useState(false);
-    const [error, setError] = useState("");
+  const { signUp } = useAuth();
+  const navigate = useNavigate();
 
-    const handleSignUp = (e) => {
-        e.preventDefault();
-        setError("");
-        if (!selected) {
-            setError("Please select a role.");
-            return;
-        }
-        if (!name || !email || !password) {
-            setError("Please fill in all fields.");
-            return;
-        }
-        if (password.length < 6) {
-            setError("Password must be at least 6 characters.");
-            return;
-        }
-        if (password !== confirmPassword) {
-            setError("Passwords do not match.");
-            return;
-        }
-        const result = signUp(name, email, password, selected);
-        if (result.success) {
-            navigate(rolePaths[selected]);
-        } else {
-            setError(result.error || "Sign up failed.");
-        }
-    };
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPass, setShowPass] = useState(false);
+  const [error, setError] = useState("");
 
-    return (
-        <div className="signup-container">
-            <div className="signup-bg-grid bg-grid-pattern" />
-            <div className="signup-glow-1" />
-            <div className="signup-glow-2" />
-            <div className="signup-glow-3" />
+  const handleSignUp = (e) => {
+    e.preventDefault();
+    setError("");
 
-            <div className="signup-content-wrapper">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="signup-header"
-                >
-                    <div className="signup-logo-container gradient-gold shadow-gold">
-                        <BookOpen className="signup-logo-icon" />
-                    </div>
-                    <h1 className="signup-title font-display">
-                        Create your <span className="text-gradient-gold">ILES</span> account
-                    </h1>
-                    <p className="signup-subtitle">
-                        <Sparkles className="signup-subtitle-icon" />
-                        Select your role and get started
-                    </p>
-                </motion.div>
+    if (!selectedRole) {
+      setError("Please select a role.");
+      return;
+    }
+    if (!name || !email || !password) {
+      setError("Please fill in all fields.");
+      return;
+    }
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
-                {/* Role Selection */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    className="signup-role-grid"
-                >
-                    {roleConfig.map((r, i) => (
-                        <motion.button
-                            type="button"
-                            key={r.role}
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.3, delay: 0.15 + i * 0.05 }}
-                            onClick={() => setSelected(r.role)}
-                            className={`signup-role-card ${selected === r.role ? `selected ${r.glow}` : "unselected"}`}
-                        >
-                            <div className="signup-role-hover-overlay" />
-                            <div className={`signup-role-icon-box bg-gradient-to-br ${r.gradient}`}>
-                                <r.icon className="signup-role-icon" />
-                            </div>
-                            <p className="signup-role-name">{roleLabels[r.role]}</p>
-                            <p className="signup-role-desc">{r.description}</p>
-                            {selected === r.role && (
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    className="signup-role-selected-icon"
-                                >
-                                    <CheckCircle2 className="w-5 h-5 text-accent" />
-                                </motion.div>
-                            )}
-                        </motion.button>
-                    ))}
-                </motion.div>
+    const result = signUp(name, email, password, selectedRole);
 
-                {/* Sign Up Form */}
-                <motion.form
-                    onSubmit={handleSignUp}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.3 }}
-                    className="card-premium signup-form"
-                >
-                    {error && (
-                        <div className="signup-error-box">
-                            <AlertCircle className="signup-error-icon" />
-                            {error}
-                        </div>
-                    )}
+    if (result.success && rolePaths[selectedRole]) {
+      navigate(rolePaths[selectedRole]);
+    } else {
+      setError(result.error || "Sign up failed.");
+    }
+  };
 
-                    <div>
-                        <label className="signup-label">Full Name</label>
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            placeholder="John Doe"
-                            className="input-premium signup-input"
-                        />
-                    </div>
-                    <div>
-                        <label className="signup-label">Email</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="you@university.edu"
-                            className="input-premium signup-input"
-                        />
-                    </div>
-                    <div>
-                        <label className="signup-label">Password</label>
-                        <div className="signup-password-wrapper">
-                            <input
-                                type={showPass ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="Min. 6 characters"
-                                className="input-premium signup-password-input"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPass(!showPass)}
-                                className="signup-password-toggle"
-                            >
-                                {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </button>
-                        </div>
-                    </div>
-                    <div>
-                        <label className="signup-label">Confirm Password</label>
-                        <input
-                            type={showPass ? "text" : "password"}
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder="Re-enter password"
-                            className="input-premium signup-input"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={!selected}
-                        className="btn-primary signup-submit-btn"
-                    >
-                        Create Account
-                        <ArrowRight className="signup-submit-icon" />
-                    </button>
-                    <p className="signup-footer-text">
-                        Already have an account?{" "}
-                        <Link to="/login" className="signup-link">
-                            Sign In
-                        </Link>
-                    </p>
-                </motion.form>
+  return (
+    <div className="login-page">
+      <div className="login-grid-pattern" />
+      <div className="login-blob-left" />
+      <div className="login-blob-right" />
+
+      <div className="login-card-wrapper">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="login-header"
+        >
+          <div className="login-logo">
+            <BookOpen className="login-logo-icon" />
+          </div>
+          <h1 className="login-title">
+            Create your <span className="login-title-highlight">ILES</span> account
+          </h1>
+          <p className="login-subtitle">
+            <Sparkles className="login-subtitle-icon" />
+            Select your role and get started
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="signup-role-grid"
+        >
+          {roleConfig.map((r, index) => (
+            <motion.button
+              key={r.role}
+              type="button"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.25, delay: 0.15 + index * 0.05 }}
+              onClick={() => setSelectedRole(r.role)}
+              className={`signup-role-card ${
+                selectedRole === r.role ? "signup-role-card--selected" : ""
+              }`}
+            >
+              <div className={`signup-role-icon ${r.accentClass}`}>
+                <r.icon className="signup-role-icon-svg" />
+              </div>
+              <div className="signup-role-content">
+                <p className="signup-role-title">{roleLabels[r.role]}</p>
+                <p className="signup-role-description">{r.description}</p>
+              </div>
+              {selectedRole === r.role && (
+                <div className="signup-role-check">
+                  <CheckCircle2 className="signup-role-check-icon" />
+                </div>
+              )}
+            </motion.button>
+          ))}
+        </motion.div>
+
+        <motion.form
+          onSubmit={handleSignUp}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="login-form"
+        >
+          {error && (
+            <div className="login-error">
+              <AlertCircle className="login-error-icon" />
+              {error}
             </div>
-        </div>
-    );
+          )}
+
+          <div className="login-field">
+            <label className="login-label">Full Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="John Doe"
+              className="login-input"
+            />
+          </div>
+
+          <div className="login-field">
+            <label className="login-label">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@university.edu"
+              className="login-input"
+            />
+          </div>
+
+          <div className="login-field">
+            <label className="login-label">Password</label>
+            <div className="login-password-wrapper">
+              <input
+                type={showPass ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Min. 6 characters"
+                className="login-input login-input-password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(!showPass)}
+                className="login-toggle-password"
+              >
+                {showPass ? (
+                  <EyeOff className="login-toggle-password-icon" />
+                ) : (
+                  <Eye className="login-toggle-password-icon" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          <div className="login-field">
+            <label className="login-label">Confirm Password</label>
+            <input
+              type={showPass ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Re-enter password"
+              className="login-input"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={!selectedRole}
+            className="login-submit"
+          >
+            Create Account
+            <ArrowRight className="login-submit-icon" />
+          </button>
+
+          <p className="login-footer-text">
+            Already have an account?{" "}
+            <Link to="/login" className="login-footer-link">
+              Sign In
+            </Link>
+          </p>
+        </motion.form>
+      </div>
+    </div>
+  );
 };
 
 export default SignUp;
+
