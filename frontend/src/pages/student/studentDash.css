@@ -207,4 +207,13 @@
     letter-spacing: 0.16em;
     color: #facc15;
   }
+  .student-dash-recent-body {
+    border-top: none;
+  }
+  
+  .student-dash-empty-text {
+    padding-top: 0.8rem;
+    font-size: 0.85rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
   
