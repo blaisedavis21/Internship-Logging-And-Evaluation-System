@@ -50,4 +50,20 @@
     background: radial-gradient(circle at top left, #020617, #020617);
     box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
   }
+  .student-dash-stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.9rem;
+  }
+  
+  .student-dash-stat-icon {
+    width: 2.3rem;
+    height: 2.3rem;
+    border-radius: 0.9rem;
+    background: linear-gradient(to bottom right, #3b82f6, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   
