@@ -173,3 +173,17 @@
     gap: 0.8rem;
   }
   
+.scores-summary-pill {
+    border-radius: 0.9rem;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    background: radial-gradient(circle at top left, #020617, #020617);
+    padding: 0.65rem 0.4rem;
+    text-align: center;
+  }
+  
+  .scores-summary-pill-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
