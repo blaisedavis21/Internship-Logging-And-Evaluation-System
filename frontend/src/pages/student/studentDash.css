@@ -88,4 +88,17 @@
     font-size: 0.75rem;
     color: rgba(148, 163, 184, 0.9);
   }
+  .student-dash-stat-change {
+    margin-top: 0.4rem;
+    font-size: 0.7rem;
+    color: #facc15;
+    font-weight: 500;
+  }
+  
+  .student-dash-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
   
