@@ -227,4 +227,20 @@
   .student-dash-log-row:hover {
     background-color: rgba(15, 23, 42, 0.7);
   }
+  .student-dash-log-main {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  
+  .student-dash-week-pill {
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 1rem;
+    background: radial-gradient(circle at top left, rgba(234, 179, 8, 0.16), transparent);
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   
