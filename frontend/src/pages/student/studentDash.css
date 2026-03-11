@@ -277,3 +277,8 @@
       gap: 1rem;
     }
   
+    .student-dash-main-grid {
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      }
+    }
+    
