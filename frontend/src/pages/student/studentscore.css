@@ -150,3 +150,13 @@
     color: rgba(148, 163, 184, 0.95);
   }
   
+.scores-summary-info {
+    flex: 1;
+  }
+  
+  .scores-summary-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
