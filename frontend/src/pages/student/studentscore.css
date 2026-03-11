@@ -70,3 +70,15 @@
     margin: 0 auto 1.25rem;
   }
   
+.scores-empty-icon-svg {
+    width: 2.2rem;
+    height: 2.2rem;
+    color: rgba(148, 163, 184, 1);
+  }
+  
+  .scores-empty-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
