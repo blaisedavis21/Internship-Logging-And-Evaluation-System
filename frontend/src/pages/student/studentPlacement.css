@@ -269,3 +269,10 @@
     color: #f9fafb;
   }
   
+.placement-empty-text {
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
+  
