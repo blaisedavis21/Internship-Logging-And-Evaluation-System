@@ -1,8 +1,8 @@
+/* Make the app fill the entire viewport so pages
+   like the login screen can control their own layout */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
 
 .logo {
