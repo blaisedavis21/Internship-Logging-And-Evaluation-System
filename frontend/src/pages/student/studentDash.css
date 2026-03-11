@@ -183,4 +183,11 @@
   .status-text-pending {
     color: #facc15;
   }
+  .status-bg-rejected {
+    background-color: rgba(239, 68, 68, 0.18);
+  }
+  
+  .status-text-rejected {
+    color: #fecaca;
+  }
   
