@@ -269,3 +269,13 @@
     color: #f9fafb;
   }
   
+.scores-eval-subtitle {
+    margin-top: 0.1rem;
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
+  .scores-eval-score-wrap {
+    text-align: right;
+  }
+  
