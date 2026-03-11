@@ -100,3 +100,14 @@
   }
   
   
+.placement-hero-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
+  .placement-hero-dept {
+    font-size: 0.85rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
