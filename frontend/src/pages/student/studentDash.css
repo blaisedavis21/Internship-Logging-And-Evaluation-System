@@ -143,4 +143,22 @@
     letter-spacing: 0.18em;
     color: rgba(148, 163, 184, 0.9);
   }
+  .student-dash-meta-value {
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #e5e7eb;
+  }
+  
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.22rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
   
