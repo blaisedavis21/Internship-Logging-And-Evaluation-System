@@ -160,3 +160,16 @@
     color: #f9fafb;
   }
   
+.scores-summary-subtitle {
+    margin-top: 0.1rem;
+    font-size: 0.8rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
+  .scores-summary-stats {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+  }
+  
