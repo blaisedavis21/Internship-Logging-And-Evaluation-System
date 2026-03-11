@@ -245,3 +245,15 @@
     padding: 4rem 1rem;
   }
   
+.placement-empty-icon {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.4rem;
+    background-color: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(30, 41, 59, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.2rem;
+  }
+  
