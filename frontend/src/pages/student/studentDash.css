@@ -176,4 +176,11 @@
   .status-text-submitted {
     color: #93c5fd;
   }
+  .status-bg-pending {
+    background-color: rgba(234, 179, 8, 0.18);
+  }
+  
+  .status-text-pending {
+    color: #facc15;
+  }
   
