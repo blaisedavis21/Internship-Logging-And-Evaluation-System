@@ -82,4 +82,21 @@
     align-items: center;
     gap: 1rem;
   }
+  .placement-hero-icon {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 1.1rem;
+    background: radial-gradient(circle at top left, rgba(234, 179, 8, 0.16), transparent);
+    border: 1px solid rgba(234, 179, 8, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .placement-hero-icon-svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #facc15;
+  }
+  
   
