@@ -266,4 +266,9 @@
     align-items: center;
     gap: 0.7rem;
   }
+  .student-dash-log-hours {
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.9);
+    font-weight: 500;
+  }
   
