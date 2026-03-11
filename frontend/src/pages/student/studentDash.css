@@ -77,4 +77,15 @@
     height: 0.9rem;
     color: rgba(148, 163, 184, 0.8);
   }
+  .student-dash-stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #f9fafb;
+  }
+  
+  .student-dash-stat-label {
+    margin-top: 0.2rem;
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.9);
+  }
   
