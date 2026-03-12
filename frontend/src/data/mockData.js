@@ -48,37 +48,61 @@ export const mockLogs = [
     id: 1,
     studentId: 1,
     weekNumber: 1,
-    hoursWorked: 38,
-    status: "approved",
     startDate: "2026-01-03",
     endDate: "2026-01-09",
+    activities:
+      "Onboarded to the team, set up development environment, and reviewed existing codebase.",
+    learningOutcomes:
+      "Understood project architecture and deployment workflow; became familiar with code standards.",
+    challenges: "Configuring local environment and resolving dependency issues.",
+    supervisorComment: "Good start to the internship.",
+    hoursWorked: 38,
+    status: "approved",
   },
   {
     id: 2,
     studentId: 1,
     weekNumber: 2,
-    hoursWorked: 40,
-    status: "approved",
     startDate: "2026-01-10",
     endDate: "2026-01-16",
+    activities:
+      "Implemented new feature module and wrote unit tests for existing components.",
+    learningOutcomes:
+      "Improved React state management skills and gained experience writing tests.",
+    challenges: "Debugging asynchronous bugs and handling edge cases.",
+    supervisorComment: "Nicely written tests and clean code.",
+    hoursWorked: 40,
+    status: "approved",
   },
   {
     id: 3,
     studentId: 1,
     weekNumber: 3,
-    hoursWorked: 39,
-    status: "submitted",
     startDate: "2026-01-17",
     endDate: "2026-01-23",
+    activities:
+      "Participated in sprint planning and supported bug fixes reported by QA.",
+    learningOutcomes:
+      "Learned how to estimate tasks and work with issue tracking workflows.",
+    challenges: "Prioritizing bugs while keeping feature work on track.",
+    hoursWorked: 39,
+    status: "submitted",
   },
   {
     id: 4,
     studentId: 1,
     weekNumber: 4,
-    hoursWorked: 41,
-    status: "approved",
     startDate: "2026-01-24",
     endDate: "2026-01-30",
+    activities:
+      "Refactored legacy components for performance and accessibility improvements.",
+    learningOutcomes:
+      "Deepened understanding of performance optimization and accessibility best practices.",
+    challenges: "Balancing refactors with minimal regressions.",
+    supervisorComment:
+      "Great progress this month; keep documenting your work clearly.",
+    hoursWorked: 41,
+    status: "approved",
   },
 ];
 
