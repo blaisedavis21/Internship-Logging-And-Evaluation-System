@@ -108,3 +108,17 @@
     color: #f9fafb;
   }
   
+.logbook-new-close {
+    border: none;
+    background: transparent;
+    padding: 0.35rem;
+    border-radius: 0.6rem;
+    cursor: pointer;
+  }
+  
+  .logbook-new-close-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
