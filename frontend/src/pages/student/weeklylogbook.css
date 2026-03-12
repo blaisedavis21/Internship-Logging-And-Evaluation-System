@@ -357,3 +357,20 @@
     font-size: 0.7rem;
   }
   
+.logbook-btn-small-icon {
+    width: 0.9rem;
+    height: 0.9rem;
+  }
+  
+  .logbook-locked-row {
+    padding: 0.6rem 1.4rem 0.7rem;
+    border-top: 1px solid rgba(16, 185, 129, 0.18);
+    background-color: rgba(16, 185, 129, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #6ee7b7;
+  }
+  
