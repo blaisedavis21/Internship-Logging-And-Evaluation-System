@@ -179,3 +179,16 @@
   background: linear-gradient(to right, #facc15, #eab308, #f97316);
   color: #111827;
 }
+
+.logbook-btn-secondary {
+    background-color: rgba(15, 23, 42, 0.9);
+    color: rgba(148, 163, 184, 0.95);
+    border: 1px solid rgba(51, 65, 85, 0.95);
+  }
+  
+  .logbook-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
