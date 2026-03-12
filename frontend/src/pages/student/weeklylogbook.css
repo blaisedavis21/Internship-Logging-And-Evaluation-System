@@ -153,3 +153,13 @@
     color: rgba(148, 163, 184, 0.78);
   }
   
+.logbook-input-hours {
+    max-width: 7rem;
+  }
+  
+  .logbook-new-actions {
+    display: flex;
+    gap: 0.6rem;
+    padding-top: 0.4rem;
+  }
+  
