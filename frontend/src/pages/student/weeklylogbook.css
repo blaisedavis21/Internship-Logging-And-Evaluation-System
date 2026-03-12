@@ -122,3 +122,19 @@
     color: rgba(148, 163, 184, 0.95);
   }
   
+.logbook-new-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  
+  .logbook-new-body label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: rgba(148, 163, 184, 0.95);
+  }
+  
