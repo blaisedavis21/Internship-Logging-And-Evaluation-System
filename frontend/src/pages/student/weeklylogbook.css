@@ -252,3 +252,15 @@
     color: rgba(148, 163, 184, 0.95);
   }
   
+.logbook-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+  
+  .logbook-card-hours {
+    font-size: 0.78rem;
+    color: rgba(148, 163, 184, 0.9);
+    font-weight: 500;
+  }
+  
