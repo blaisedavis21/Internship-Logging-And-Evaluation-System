@@ -39,7 +39,7 @@ const AdminReports = () => {
 
   return (
     <AppLayout>
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto py-4">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="mb-8">
           <div className="flex items-center gap-2 mb-1">
             <BarChart3 className="w-4 h-4 text-accent" />
@@ -49,12 +49,12 @@ const AdminReports = () => {
           <p className="text-muted-foreground mt-1 text-sm">Aggregated data and visualizations</p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
+        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 mb-10">
           {/* Hours per student */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="card-premium p-6 flex flex-col">
             <h3 className="text-base font-bold font-display text-foreground mb-1">Hours per Student</h3>
             <p className="text-xs text-muted-foreground mb-5">Total logged hours comparison</p>
-            <div className="flex-1 min-h-[240px]">
+            <div className="flex-1 min-h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={hoursData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(220 30% 14%)" vertical={false} />
@@ -71,7 +71,7 @@ const AdminReports = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="card-premium p-6 flex flex-col">
             <h3 className="text-base font-bold font-display text-foreground mb-1">Placement Status</h3>
             <p className="text-xs text-muted-foreground mb-5">Distribution across states</p>
-            <div className="flex-1 min-h-[200px]">
+            <div className="flex-1 min-h-[240px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie data={placementStatus} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} strokeWidth={0}>
@@ -97,7 +97,7 @@ const AdminReports = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="card-premium p-6 lg:col-span-2 flex flex-col">
             <h3 className="text-base font-bold font-display text-foreground mb-1">Weekly Activity Trend</h3>
             <p className="text-xs text-muted-foreground mb-5">Logs and hours per week</p>
-            <div className="flex-1 min-h-[260px]">
+            <div className="flex-1 min-h-[320px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={weeklyTrend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <defs>
@@ -127,7 +127,7 @@ const AdminReports = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent pointer-events-none" />
           <div className="relative z-10">
             <h3 className="text-lg font-bold font-display text-foreground mb-6">Quick Summary</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
               {[
                 { label: "Total Users", value: mockUsers.length },
                 { label: "Placements", value: mockPlacements.length },
