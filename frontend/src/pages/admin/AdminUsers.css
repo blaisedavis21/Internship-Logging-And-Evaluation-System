@@ -71,3 +71,13 @@
 .table-premium tbody tr:last-child td {
   border-bottom: none;
 }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
