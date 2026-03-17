@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState } from 'react';
-import { mockUsers } from '../data/mockData';
+
 
 const AuthContext = createContext();
 
+const API_URL = 'http://127.0.0.1:8000/api';
+
 export const AuthProvider = ({ children }) => {
-  const [users, setUsers] = useState(mockUsers);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null)
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const signIn = (email, password) => {
