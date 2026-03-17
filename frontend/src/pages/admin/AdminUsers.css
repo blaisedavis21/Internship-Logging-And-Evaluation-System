@@ -28,3 +28,11 @@
   border-color: hsl(45 93% 58%);
   box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
 }
+
+.input-premium::placeholder {
+  color: hsl(220 15% 55%);
+}
+
+.pl-11 {
+  padding-left: 2.75rem;
+}
