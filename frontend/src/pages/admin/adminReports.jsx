@@ -3,7 +3,7 @@ import { mockLogs, mockPlacements, mockEvaluations, mockUsers } from "@/data/moc
 import { motion } from "framer-motion";
 import { BarChart3 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell, AreaChart, Area } from "recharts";
-import "./adminReports.css";
+import "./Adminreports.css";
 
 const AdminReports = () => {
   const hoursData = mockUsers

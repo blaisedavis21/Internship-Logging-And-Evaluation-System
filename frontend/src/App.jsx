@@ -7,7 +7,7 @@ import StudentPlacement from './pages/student/studentPlacement'
 import StudentScores from './pages/student/studentscores'
 import WeeklyLogbook from './pages/student/weeklylogbook'
 import AdminEvaluations from './pages/admin/adminEvaluations'
-import AdminReports from './pages/admin/adminReports'
+import AdminReports from './pages/admin/Adminreports'
 import './App.css'
 
 function App() {

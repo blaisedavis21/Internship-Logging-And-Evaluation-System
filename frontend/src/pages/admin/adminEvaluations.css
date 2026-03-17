@@ -249,3 +249,22 @@
      background: linear-gradient(90deg, transparent, var(--accent), transparent);
      opacity: 0.4;
    }
+   
+   /* ── Empty state ────────────────────────────────────────── */
+   .empty-icon-wrapper {
+     width: 5rem;
+     height: 5rem;
+     border-radius: var(--r-xl);
+     background: var(--bg-overlay);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     margin: 0 auto 1.25rem;
+   }
+   
+   /* ── Scrollbar ──────────────────────────────────────────── */
+   ::-webkit-scrollbar        { width: 6px; }
+   ::-webkit-scrollbar-track  { background: var(--bg); }
+   ::-webkit-scrollbar-thumb  { background: var(--border); border-radius: 9999px; }
+   ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+   
