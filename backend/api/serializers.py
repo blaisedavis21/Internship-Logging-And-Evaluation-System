@@ -48,3 +48,13 @@ class SupervisorReviewSerializer(serializers.ModelSerializer):
         model = SupervisorReview
         fields = ['id', 'log', 'supervisor', 'supervisor_name', 'comment', 'status', 'reviewed_at']
         read_only_fields = ['reviewed_at']
+
+        
+class EvaluationSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+    evaluator_name = serializers.CharField(source='evaluator.full_name', read_only=True)
+
+    class Meta:
+        model = Evaluation
+        fields = ['id', 'student', 'student_name', 'evaluator', 'evaluator_name', 'score', 'comments', 'evaluation_type', 'date']
+        read_only_fields = ['date']
