@@ -23,4 +23,23 @@
      /* Typography */
      --font-display: 'Playfair Display', Georgia, serif;
      --font-body:    'DM Sans', sans-serif;
+        /* Radii */
+     --r-sm:  8px;
+     --r-md:  14px;
+     --r-lg:  20px;
+     --r-xl:  28px;
+   
+     /* Shadows */
+     --shadow-card: 0 2px 24px rgba(0,0,0,0.45), 0 1px 0 var(--border) inset;
+     --shadow-glow: 0 0 32px rgba(212,175,95,0.10);
+   }
+   
+   /* ── Reset / Base ───────────────────────────────────────── */
+   *,
+   *::before,
+   *::after {
+     box-sizing: border-box;
+     margin: 0;
+     padding: 0;
+   }
    
