@@ -38,7 +38,7 @@ const Login = () => {
       return;
     }
 
-    const result =  signIn(email, password);
+    const result = await  signIn(email, password);
 
     if (result.success && result.role && rolePaths[result.role]) {
       navigate(rolePaths[result.role]);
