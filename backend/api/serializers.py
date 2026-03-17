@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from .models import CustomUser
+from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -24,3 +24,11 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'full_name', 'email', 'role']
+
+class InternshipPlacementSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+
+    class Meta:
+        model = InternshipPlacement
+        fields = ['id', 'student', 'student_name', 'company', 'start_date', 'end_date', 'status', 'created_at']
+        read_only_fields = ['created_at']
