@@ -161,3 +161,20 @@
    .gradient-gold {
      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-bright) 100%);
    }
+   
+   .bg-gradient-emerald {
+     background: linear-gradient(135deg, var(--emerald-from), var(--emerald-to));
+   }
+   
+   .bg-gradient-violet {
+     background: linear-gradient(135deg, var(--violet-from), var(--violet-to));
+   }
+   
+   .bg-secondary {
+     background: var(--bg-overlay);
+   }
+   
+   /* ── Rounded variants ───────────────────────────────────── */
+   .rounded-full { border-radius: 9999px; }
+   .rounded-xl   { border-radius: var(--r-lg); }
+   .rounded-2xl  { border-radius: var(--r-xl); }
