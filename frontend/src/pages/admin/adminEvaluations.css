@@ -222,3 +222,30 @@
      line-height: 1;
      letter-spacing: -0.02em;
    }
+   
+   .score-weight {
+     font-size: 0.75rem;
+     color: var(--accent);
+     font-weight: 600;
+     margin-top: 2px;
+   }
+   
+   /* ── Footer strip ───────────────────────────────────────── */
+   .eval-footer {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     font-size: 0.75rem;
+     color: var(--muted);
+   }
+   
+   /* ── Decorative top accent bar ──────────────────────────── */
+   .card-premium .accent-bar {
+     position: absolute;
+     top: 0;
+     left: 1.5rem;
+     right: 1.5rem;
+     height: 1px;
+     background: linear-gradient(90deg, transparent, var(--accent), transparent);
+     opacity: 0.4;
+   }
