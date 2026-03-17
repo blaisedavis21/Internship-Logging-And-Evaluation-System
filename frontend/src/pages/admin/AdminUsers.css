@@ -63,3 +63,11 @@
 .table-premium tbody tr {
   transition: background-color 0.2s ease;
 }
+
+.table-premium tbody tr:hover {
+  background-color: hsl(222 47% 12%);
+}
+
+.table-premium tbody tr:last-child td {
+  border-bottom: none;
+}
