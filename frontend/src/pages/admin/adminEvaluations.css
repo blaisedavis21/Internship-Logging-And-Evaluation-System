@@ -203,3 +203,22 @@
      gap: 1rem;
      margin-bottom: 1.25rem;
    }
+
+      
+   @media (min-width: 640px) {
+     .eval-header {
+       flex-direction: row;
+       align-items: center;
+       justify-content: space-between;
+     }
+   }
+   
+   /* ── Score display ──────────────────────────────────────── */
+   .score-total {
+     font-size: 1.75rem;
+     font-weight: 800;
+     font-family: var(--font-display);
+     color: var(--foreground);
+     line-height: 1;
+     letter-spacing: -0.02em;
+   }
