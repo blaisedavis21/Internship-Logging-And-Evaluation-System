@@ -18,3 +18,10 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return f"{self.full_name} ({self.role})"
+    
+    class InternshipPlacement(models.Model):
+     STATUS_CHOICES = [
+        ('new', 'New'),
+        ('active', 'Active'),
+        ('completed', 'Completed'),
+    ]
