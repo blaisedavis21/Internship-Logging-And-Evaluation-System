@@ -174,3 +174,15 @@ def review_list(request):
             serializer.save(supervisor=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'POST'])
+def evaluation_list(request):
+    if request.method == 'GET':
+        if request.user.role == 'student':
+            evaluations = Evaluation.objects.filter(student=request.user)
+        elif request.user.role in ['workplace_supervisor', 'academic_supervisor']:
+            evaluations = Evaluation.objects.filter(evaluator=request.user)
+        else:
+            evaluations = Evaluation.objects.all()
+        serializer = EvaluationSerializer(evaluations, many=True)
+        return Response(serializer.data)
