@@ -20,4 +20,7 @@ urlpatterns = [
     # Supervisor Reviews
     path('reviews/', views.review_list, name='review_list'),
 
+    # Evaluations
+    path('evaluations/', views.evaluation_list, name='evaluation_list'),
+
 ]
