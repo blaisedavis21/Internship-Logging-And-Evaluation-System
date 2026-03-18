@@ -54,3 +54,10 @@ def placement_list(request):
             placements = InternshipPlacement.objects.all()
         serializer = InternshipPlacementSerializer(placements, many=True)
         return Response(serializer.data)
+    
+    if request.method == 'POST':
+        serializer = InternshipPlacementSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
