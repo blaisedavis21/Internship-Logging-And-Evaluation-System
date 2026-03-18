@@ -152,3 +152,8 @@ def log_submit(request, pk):
     
     if log.status != 'draft':
         return Response({'error': 'Only draft logs can be submitted'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    log.status = 'submitted'
+    log.submitted_at = timezone.now()
+    log.save()
+    return Response(WeeklyLogSerializer(log).data)
