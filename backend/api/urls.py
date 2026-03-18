@@ -17,4 +17,7 @@ urlpatterns = [
     path('logs/<int:pk>/', views.log_detail, name='log_detail'),
     path('logs/<int:pk>/submit/', views.log_submit, name='log_submit'),
 
+    # Supervisor Reviews
+    path('reviews/', views.review_list, name='review_list'),
+
 ]
