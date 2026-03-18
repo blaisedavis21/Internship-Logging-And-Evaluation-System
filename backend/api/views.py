@@ -122,3 +122,10 @@ def log_list(request):
             serializer.save(student=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT'])
+def log_detail(request, pk):
+    try:
+        log = WeeklyLog.objects.get(pk=pk)
+    except WeeklyLog.DoesNotExist:
+        return Response({'error': 'Log not found'}, status=status.HTTP_404_NOT_FOUND)
