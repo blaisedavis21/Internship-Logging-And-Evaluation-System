@@ -45,3 +45,12 @@ def get_current_user(request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
+@api_view(['GET', 'POST'])
+def placement_list(request):
+    if request.method == 'GET':
+        if request.user.role == 'student':
+            placements = InternshipPlacement.objects.filter(student=request.user)
+        else:
+            placements = InternshipPlacement.objects.all()
+        serializer = InternshipPlacementSerializer(placements, many=True)
+        return Response(serializer.data)
