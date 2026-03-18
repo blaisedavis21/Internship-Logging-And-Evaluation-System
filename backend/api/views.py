@@ -167,3 +167,10 @@ def review_list(request):
             reviews = SupervisorReview.objects.all()
         serializer = SupervisorReviewSerializer(reviews, many=True)
         return Response(serializer.data)
+    
+    if request.method == 'POST':
+        serializer = SupervisorReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(supervisor=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
