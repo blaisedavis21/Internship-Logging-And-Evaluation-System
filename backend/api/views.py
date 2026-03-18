@@ -133,3 +133,12 @@ def log_detail(request, pk):
     if request.method == 'GET':
         serializer = WeeklyLogSerializer(log)
         return Response(serializer.data)
+    
+    if request.method == 'PUT':
+        if log.status != 'draft':
+            return Response({'error': 'Only draft logs can be edited'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = WeeklyLogSerializer(log, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
