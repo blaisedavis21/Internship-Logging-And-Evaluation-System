@@ -1,5 +1,4 @@
 import { ArrowDown, GraduationCap, Users, ClipboardCheck } from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
 
 const stats = [
   { icon: GraduationCap, label: "Students", value: "500+" },
@@ -12,7 +11,7 @@ const HeroSection = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
-        <img src={heroBg} alt="" className="w-full h-full object-cover" />
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80" alt="" className="w-full h-full object-cover opacity-50" />
         <div className="absolute inset-0 bg-navy/80" />
       </div>
 
