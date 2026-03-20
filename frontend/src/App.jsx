@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Start from './pages/Start'
+import LandingPage from './pages/LandingPage'
 import Login from './pages/login'
 import SignUp from './pages/signup'
 import StudentDashboard from './pages/student/studentDash'
@@ -9,13 +9,14 @@ import WeeklyLogbook from './pages/student/weeklylogbook'
 import AdminEvaluations from './pages/admin/adminEvaluations'
 import AdminReports from './pages/admin/Adminreports'
 import AdminUsers from './pages/admin/AdminUsers'
+import AdminPlacementManagement from './pages/admin/AdminPlacementManagement'
 import './App.css'
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Start />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/student" element={<StudentDashboard />} />
@@ -25,6 +26,7 @@ function App() {
         <Route path="/admin/evaluations" element={<AdminEvaluations />} />
         <Route path="/admin/reports" element={<AdminReports />} />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/placements" element={<AdminPlacementManagement />} />
       </Routes>
     </Router>
   )
