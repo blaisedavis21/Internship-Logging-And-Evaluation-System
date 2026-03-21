@@ -1,7 +1,6 @@
 ﻿from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
-from .models import CustomUser, InternshipLog
-
+from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
@@ -26,19 +25,37 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'full_name', 'email', 'role']
 
-
-class InternshipLogSerializer(serializers.ModelSerializer):
+class InternshipPlacementSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
 
     class Meta:
-        model = InternshipLog
-        fields = [
-            'id', 'student', 'student_name', 'date', 'department', 'task_description',
-            'skills_learned', 'hours_worked', 'challenges_faced', 'supervisor_comments',
-            'attachments', 'status', 'created_at'
-        ]
-        read_only_fields = ['student', 'status', 'supervisor_comments', 'created_at']
+        model = InternshipPlacement
+        fields = ['id', 'student', 'student_name', 'company', 'start_date', 'end_date', 'status', 'created_at']
+        read_only_fields = ['created_at']
 
-    def create(self, validated_data):
-        validated_data['student'] = self.context['request'].user
-        return super().create(validated_data)
+class WeeklyLogSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+
+    class Meta:
+        model = WeeklyLog
+        fields = ['id', 'student', 'student_name', 'placement', 'week_number', 'date', 'activities', 'learnings', 'challenges', 'status', 'submitted_at', 'created_at']
+        read_only_fields = ['student', 'submitted_at', 'created_at']
+
+class SupervisorReviewSerializer(serializers.ModelSerializer):
+    supervisor_name = serializers.CharField(source='supervisor.full_name', read_only=True)
+
+    class Meta:
+        model = SupervisorReview
+        fields = ['id', 'log', 'supervisor', 'supervisor_name', 'comment', 'status', 'reviewed_at']
+        read_only_fields = ['reviewed_at']
+
+        
+class EvaluationSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+    evaluator_name = serializers.CharField(source='evaluator.full_name', read_only=True)
+
+    class Meta:
+        model = Evaluation
+        fields = ['id', 'student', 'student_name', 'evaluator', 'evaluator_name', 'score', 'comments', 'evaluation_type', 'date']
+        read_only_fields = ['date']
+

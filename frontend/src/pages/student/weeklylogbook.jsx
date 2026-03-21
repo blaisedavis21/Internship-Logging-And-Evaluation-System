@@ -3,15 +3,7 @@ import axios from "axios";
 import AppLayout from "../../components/AppLayout";
 import { useAuth } from "../../contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Plus,
-  Edit3,
-  Send,
-  Lock,
-  NotebookPen,
-  X,
-} from "lucide-react";
-import "./weeklylogbook.css";
+import { Plus, Edit3, Send, Lock, NotebookPen, X } from "lucide-react";
 
 const WeeklyLogbook = () => {
   const { user, token } = useAuth();
@@ -48,7 +40,7 @@ const WeeklyLogbook = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
-    Object.keys(form).forEach(key => {
+    Object.keys(form).forEach((key) => {
       if (form[key]) formData.append(key, form[key]);
     });
 
@@ -79,22 +71,29 @@ const WeeklyLogbook = () => {
     setForm({ ...form, attachments: e.target.files[0] });
   };
 
-  if (loading) return <AppLayout><div>Loading...</div></AppLayout>;
+  if (loading)
+    return (
+      <AppLayout>
+        <div>Loading...</div>
+      </AppLayout>
+    );
 
   return (
     <AppLayout>
-      <div className="logbook-root">
-        <div className="logbook-header-row">
+      <div className="max-w-3xl mx-auto px-4 py-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            <div className="logbook-kicker">
-              <NotebookPen className="logbook-kicker-icon" />
+            <div className="flex items-center gap-2 text-emerald-700 font-semibold text-xs uppercase tracking-widest mb-2">
+              <NotebookPen className="w-4 h-4 text-emerald-600" />
               <span>Logbook</span>
             </div>
-            <h1 className="logbook-title">Daily Internship Logbook</h1>
-            <p className="logbook-subtitle">
+            <h1 className="text-3xl font-bold text-gray-900 mb-1">
+              Daily Internship Logbook
+            </h1>
+            <p className="text-gray-500 text-base">
               Record your daily internship activities
             </p>
           </motion.div>
@@ -143,7 +142,9 @@ const WeeklyLogbook = () => {
                   <input
                     type="text"
                     value={form.department}
-                    onChange={(e) => setForm({ ...form, department: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, department: e.target.value })
+                    }
                     className="logbook-input"
                     placeholder="e.g., IT Department"
                     required
@@ -153,7 +154,9 @@ const WeeklyLogbook = () => {
                   <label>Task Description</label>
                   <textarea
                     value={form.task_description}
-                    onChange={(e) => setForm({ ...form, task_description: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, task_description: e.target.value })
+                    }
                     rows={3}
                     className="logbook-input"
                     placeholder="Describe the tasks performed..."
@@ -164,7 +167,9 @@ const WeeklyLogbook = () => {
                   <label>Skills Learned</label>
                   <textarea
                     value={form.skills_learned}
-                    onChange={(e) => setForm({ ...form, skills_learned: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, skills_learned: e.target.value })
+                    }
                     rows={2}
                     className="logbook-input"
                     placeholder="What skills did you learn?"
@@ -177,7 +182,9 @@ const WeeklyLogbook = () => {
                     type="number"
                     step="0.5"
                     value={form.hours_worked}
-                    onChange={(e) => setForm({ ...form, hours_worked: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, hours_worked: e.target.value })
+                    }
                     className="logbook-input"
                     required
                   />
@@ -186,7 +193,9 @@ const WeeklyLogbook = () => {
                   <label>Challenges Faced</label>
                   <textarea
                     value={form.challenges_faced}
-                    onChange={(e) => setForm({ ...form, challenges_faced: e.target.value })}
+                    onChange={(e) =>
+                      setForm({ ...form, challenges_faced: e.target.value })
+                    }
                     rows={2}
                     className="logbook-input"
                     placeholder="Any challenges faced?"
@@ -251,4 +260,3 @@ const WeeklyLogbook = () => {
 };
 
 export default WeeklyLogbook;
-
