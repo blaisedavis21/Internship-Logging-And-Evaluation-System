@@ -22,8 +22,9 @@ import AcademicDashboard from "./pages/academic/AcademicDashboard";
 import AcademicSupervisorDashboard from "./pages/supervisor/academic/Dashboard";
 import AcademicReviewLogs from "./pages/supervisor/academic/ReviewLogs";
 import AcademicEvaluate from "./pages/supervisor/academic/Evaluate";
-import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound.jsx";
+import Notifications from "./pages/Notifications.jsx";
+import StudentNotifications from "./pages/student/Notifications.jsx";
 
 function App() {
   return (
@@ -78,6 +79,10 @@ function App() {
         <Route path="/academic" element={<AcademicDashboard />} />
         <Route path="/overview" element={<Overview />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route
+          path="/student/notifications"
+          element={<StudentNotifications />}
+        />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
