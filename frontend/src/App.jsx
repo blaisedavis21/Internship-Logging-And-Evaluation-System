@@ -15,8 +15,15 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import Overview from "./pages/Overview";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import SupervisorDashboard from "./pages/supervisor/SupervisorDashboard";
+import WorkplaceSupervisorDashboard from "./pages/supervisor/workplace/Dashboard";
+import WorkplaceReviewLogs from "./pages/supervisor/workplace/ReviewLogs";
+import WorkplaceEvaluate from "./pages/supervisor/workplace/Evaluate";
 import AcademicDashboard from "./pages/academic/AcademicDashboard";
-import NotFound from "./pages/NotFound";
+import AcademicSupervisorDashboard from "./pages/supervisor/academic/Dashboard";
+import AcademicReviewLogs from "./pages/supervisor/academic/ReviewLogs";
+import AcademicEvaluate from "./pages/supervisor/academic/Evaluate";
+import Notifications from "./pages/Notifications";
+import NotFound from "./pages/NotFound.jsx";
 
 function App() {
   return (
@@ -38,9 +45,39 @@ function App() {
           path="/admin/placements"
           element={<AdminPlacementManagement />}
         />
+        {/* Workplace Supervisor Routes */}
+        <Route
+          path="/supervisor/workplace"
+          element={<WorkplaceSupervisorDashboard />}
+        />
+        <Route
+          path="/supervisor/workplace/review"
+          element={<WorkplaceReviewLogs />}
+        />
+        <Route
+          path="/supervisor/workplace/evaluate"
+          element={<WorkplaceEvaluate />}
+        />
+
+        {/* Academic Supervisor Routes */}
+        <Route
+          path="/supervisor/academic"
+          element={<AcademicSupervisorDashboard />}
+        />
+        <Route
+          path="/supervisor/academic/review"
+          element={<AcademicReviewLogs />}
+        />
+        <Route
+          path="/supervisor/academic/evaluate"
+          element={<AcademicEvaluate />}
+        />
+
+        {/* Legacy supervisor dashboard route (optional) */}
         <Route path="/supervisor" element={<SupervisorDashboard />} />
         <Route path="/academic" element={<AcademicDashboard />} />
         <Route path="/overview" element={<Overview />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
