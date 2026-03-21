@@ -10,6 +10,7 @@ import AdminEvaluations from "./pages/admin/adminEvaluations";
 import AdminReports from "./pages/admin/Adminreports";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminPlacementManagement from "./pages/admin/AdminPlacementManagement";
+import AcademicSupervisorDashboard from "./pages/supervisor/academicDashboard";
 
 function App() {
   return (
@@ -22,6 +23,10 @@ function App() {
         <Route path="/student/placement" element={<StudentPlacement />} />
         <Route path="/student/scores" element={<StudentScores />} />
         <Route path="/student/logbook" element={<WeeklyLogbook />} />
+        <Route
+          path="/supervisor/academic"
+          element={<AcademicSupervisorDashboard />}
+        />
         <Route path="/admin/evaluations" element={<AdminEvaluations />} />
         <Route path="/admin/reports" element={<AdminReports />} />
         <Route path="/admin/users" element={<AdminUsers />} />
