@@ -31,4 +31,10 @@
     background-image: radial-gradient(rgba(234, 179, 8, 0.15) 1px, transparent 1px);
     background-size: 20px 20px;
   }
+  .text-gradient-gold {
+    background: linear-gradient(to right, #facc15, #eab308, #f97316);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   
