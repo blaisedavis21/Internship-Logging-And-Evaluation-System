@@ -8,4 +8,7 @@
   .gradient-gold {
     background: linear-gradient(to right, #facc15, #eab308, #f97316);
   }
+  .shadow-gold {
+    box-shadow: 0 10px 25px -5px rgba(234, 179, 8, 0.4), 0 8px 10px -6px rgba(234, 179, 8, 0.1);
+  }
   
