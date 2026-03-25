@@ -55,61 +55,58 @@ const modules = [
 
 const ModulesSection = () => {
   return (
-    <section id="modules" className="py-24 px-6 gradient-hero">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="text-sm font-semibold text-gold uppercase tracking-widest">
-            System Architecture
-          </span>
-          <h2 className="text-4xl sm:text-5xl font-serif font-bold text-gold-light mt-3">
-            Seven Core Modules
-          </h2>
-          <p className="text-gold/50 mt-4 max-w-xl mx-auto">
-            A modular architecture covering the complete internship lifecycle.
-          </p>
-        </div>
+    <section
+      id="modules"
+      className="relative py-28 px-6 bg-gradient-to-b from-yellow-50/80 via-white/60 to-yellow-100/90 dark:from-yellow-900/90 dark:via-yellow-900/60 dark:to-yellow-950/80 overflow-hidden"
+    >
+      <div className="max-w-6xl mx-auto relative z-10">
+        {/* Removed System Architecture section header and description as requested */}
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {modules.map((mod, i) => (
             <div
               key={mod.num}
-              className="group relative rounded-2xl border border-gold/10 bg-navy-light/50 p-6 hover:border-gold/30 hover:bg-navy-light/80 transition-all duration-300 opacity-0 animate-fade-up"
+              className="group relative rounded-3xl border border-yellow-200/60 dark:border-yellow-900/40 bg-white/70 dark:bg-yellow-900/40 shadow-xl p-8 hover:border-yellow-400/80 hover:bg-yellow-100/80 dark:hover:bg-yellow-900/60 transition-all duration-300 opacity-0 animate-fade-up backdrop-blur-xl hover:scale-105 hover:shadow-2xl"
               style={{ animationDelay: `${0.1 + i * 0.08}s` }}
             >
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
-                  <mod.icon className="w-6 h-6 text-gold" />
+              <div className="flex items-start gap-5">
+                <div className="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-200 via-yellow-400 to-yellow-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <mod.icon className="w-8 h-8 text-blue-900 group-hover:text-yellow-100 transition-colors duration-300" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-gold/40 tracking-widest">
+                    <span className="text-xs font-extrabold text-yellow-700/40 dark:text-yellow-200/40 tracking-widest">
                       MODULE {mod.num}
                     </span>
                   </div>
-                  <h3 className="text-base font-bold text-gold-light font-serif">
+                  <h3 className="text-xl font-extrabold text-yellow-700 dark:text-yellow-100 font-serif drop-shadow">
                     {mod.title}
                   </h3>
-                  <p className="text-sm text-gold/40 mt-1.5 leading-relaxed">
+                  <p className="text-base text-yellow-700/60 dark:text-yellow-200/60 mt-2 leading-relaxed font-medium">
                     {mod.desc}
                   </p>
                 </div>
               </div>
             </div>
           ))}
-
-          {/* CTA card */}
-          <div
-            className="rounded-2xl border border-gold/20 bg-gold/5 p-6 flex flex-col items-center justify-center text-center opacity-0 animate-fade-up"
-            style={{ animationDelay: "0.7s" }}
+        </div>
+        {/* Decorative blurred circles */}
+        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-yellow-200/30 blur-3xl animate-pulse-slow z-0" />
+        <div className="absolute -bottom-32 right-10 w-96 h-96 rounded-full bg-yellow-100/20 blur-3xl animate-float z-0" />
+        {/* CTA card */}
+        <div
+          className="rounded-2xl border border-yellow-200 dark:border-yellow-900/30 bg-yellow-100/30 dark:bg-yellow-900/10 p-6 flex flex-col items-center justify-center text-center opacity-0 animate-fade-up mt-16"
+          style={{ animationDelay: "0.7s" }}
+        >
+          <p className="text-yellow-700/60 dark:text-yellow-300/60 text-sm mb-3">
+            Ready to get started?
+          </p>
+          <a
+            href="/login"
+            className="px-6 py-2.5 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 text-blue-900 font-bold text-sm hover:opacity-90 transition-opacity shadow-lg"
           >
-            <p className="text-gold/60 text-sm mb-3">Ready to get started?</p>
-            <a
-              href="/login"
-              className="px-6 py-2.5 rounded-xl gradient-gold text-navy font-bold text-sm hover:opacity-90 transition-opacity shadow-gold"
-            >
-              Sign In
-            </a>
-          </div>
+            Sign In
+          </a>
         </div>
       </div>
     </section>

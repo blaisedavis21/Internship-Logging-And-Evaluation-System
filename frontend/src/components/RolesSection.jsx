@@ -1,4 +1,8 @@
 import { GraduationCap, Briefcase, BookOpen, Shield } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 const roles = [
   {
@@ -36,43 +40,73 @@ const roles = [
 ];
 
 const RolesSection = () => {
+  const cardsRef = useRef([]);
+
+  useEffect(() => {
+    if (cardsRef.current) {
+      gsap.fromTo(
+        cardsRef.current,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          stagger: 0.18,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: cardsRef.current[0]?.parentNode,
+            start: "top 80%",
+          },
+        },
+      );
+    }
+  }, []);
+
   return (
-    <section id="roles" className="py-24 px-6 bg-background">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <span className="text-sm font-semibold text-gold uppercase tracking-widest">
+    <section
+      id="roles"
+      className="relative py-28 px-6 bg-gradient-to-b from-gray-50/80 via-white/60 to-yellow-50/80 dark:from-gray-900/90 dark:via-yellow-900/60 dark:to-yellow-950/80 overflow-hidden"
+    >
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-20">
+          <span className="text-base font-extrabold text-yellow-700 dark:text-yellow-200 uppercase tracking-widest drop-shadow">
             User Roles
           </span>
-          <h2 className="text-4xl sm:text-5xl font-serif font-bold text-foreground mt-3">
+          <h2 className="text-5xl sm:text-6xl font-serif font-extrabold text-gray-900 dark:text-yellow-100 mt-4 drop-shadow-xl">
             Four Roles, One Platform
           </h2>
-          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-yellow-200/70 mt-6 max-w-2xl mx-auto font-medium">
             Each role has a tailored dashboard and workflow designed for
             efficiency and clarity.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {roles.map((role, i) => (
             <div
               key={role.title}
-              className="group relative rounded-2xl bg-card p-6 shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 opacity-0 animate-fade-up"
-              style={{ animationDelay: `${0.1 + i * 0.1}s` }}
+              ref={(el) => (cardsRef.current[i] = el)}
+              className="group relative rounded-3xl border border-yellow-200/60 dark:border-yellow-900/40 bg-white/70 dark:bg-yellow-900/40 shadow-xl p-8 hover:border-yellow-400/80 hover:bg-yellow-100/80 dark:hover:bg-yellow-900/60 transition-all duration-300 opacity-0 backdrop-blur-xl hover:scale-105 hover:shadow-2xl"
             >
               <div
-                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-5`}
+                className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${role.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform duration-300`}
               >
-                <role.icon className={`w-7 h-7 ${role.iconColor}`} />
+                <role.icon
+                  className={`w-8 h-8 ${role.iconColor} group-hover:text-yellow-100 transition-colors duration-300`}
+                />
               </div>
-              <h3 className="text-lg font-bold text-foreground mb-2 font-serif">
+              <h3 className="text-xl font-extrabold text-gray-900 dark:text-yellow-100 mb-2 font-serif drop-shadow">
                 {role.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-base text-gray-600 dark:text-yellow-200/70 leading-relaxed font-medium">
                 {role.description}
               </p>
             </div>
           ))}
         </div>
+        {/* Decorative blurred circles */}
+        <div className="absolute -top-24 -left-24 w-80 h-80 rounded-full bg-yellow-200/30 blur-3xl animate-pulse-slow z-0" />
+        <div className="absolute -bottom-32 right-10 w-96 h-96 rounded-full bg-yellow-100/20 blur-3xl animate-float z-0" />
       </div>
     </section>
   );
