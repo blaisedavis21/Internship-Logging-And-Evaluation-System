@@ -673,6 +673,3 @@ export default PlacementManagement;
 
 
 
-
-
-
