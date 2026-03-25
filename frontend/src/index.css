@@ -5,4 +5,7 @@
   .gradient-hero {
     background: radial-gradient(circle at top center, #0f172a 0%, #020617 100%);
   }
+  .gradient-gold {
+    background: linear-gradient(to right, #facc15, #eab308, #f97316);
+  }
   
