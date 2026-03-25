@@ -1,316 +1,687 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AppLayout from "../../components/AppLayout";
-import { useAuth } from "../../contexts/AuthContext";
-import { mockLogs, statusColors } from "../../data/mockData";
 import { motion, AnimatePresence } from "framer-motion";
+import { Plus, NotebookPen, X } from "lucide-react";
 import {
-  Plus,
-  Edit3,
-  Send,
-  Lock,
-  NotebookPen,
-  X,
-} from "lucide-react";
-import "./weeklylogbook.css";
+  mockLogs,
+  statusColors,
+  addMockLog,
+  updateMockLog,
+  deleteMockLog,
+} from "../../data/mockData";
 
 const WeeklyLogbook = () => {
-  const { user } = useAuth();
-  const [logs, setLogs] = useState(
-    mockLogs.filter((l) => l.studentId === user?.id)
-  );
-  const [editing, setEditing] = useState(null);
+  // Always use mock logs for demo
+  const demoStudentId = 1;
   const [showNew, setShowNew] = useState(false);
   const [form, setForm] = useState({
-    activities: "",
-    learningOutcomes: "",
-    challenges: "",
-    hoursWorked: 0,
+    date: "",
+    department: "",
+    task_description: "",
+    skills_learned: "",
+    hours_worked: "",
+    challenges_faced: "",
+    attachments: null,
   });
-
-  const handleSubmitLog = (logId) => {
-    setLogs((prev) =>
-      prev.map((l) =>
-        l.id === logId
-          ? {
-              ...l,
-              status: "submitted",
-              submittedAt: new Date().toISOString().split("T")[0],
-            }
-          : l
-      )
-    );
+  const [logs, setLogs] = useState(
+    mockLogs.filter((l) => l.studentId === demoStudentId),
+  );
+  const [historyLog, setHistoryLog] = useState(null);
+  // Demo: Assume deadline is always Sunday 23:59 of the log's endDate week
+  const isPastDeadline = (log) => {
+    if (!log.endDate) return false;
+    const deadline = new Date(log.endDate);
+    deadline.setDate(deadline.getDate() + (7 - deadline.getDay())); // Next Sunday
+    deadline.setHours(23, 59, 59, 999);
+    return new Date() > deadline;
   };
+  const isLocked = (log) => log.status === "approved" || isPastDeadline(log);
+  const [editLog, setEditLog] = useState(null);
+  const [editForm, setEditForm] = useState({});
 
-  const handleNewLog = () => {
-    const maxWeek = logs.reduce(
-      (max, l) => Math.max(max, l.weekNumber),
-      0
-    );
-    const today = new Date();
-    const sixDaysLater = new Date(today.getTime() + 6 * 86400000);
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
     const newLog = {
-      id: Date.now(),
-      studentId: user?.id || 0,
-      studentName: user?.name || "",
-      weekNumber: maxWeek + 1,
-      startDate: today.toISOString().split("T")[0],
-      endDate: sixDaysLater.toISOString().split("T")[0],
-      activities: form.activities,
-      learningOutcomes: form.learningOutcomes,
-      challenges: form.challenges,
-      hoursWorked: form.hoursWorked,
-      status: "draft",
+      id: mockLogs.length + 1,
+      studentId: demoStudentId,
+      weekNumber: mockLogs.length + 1,
+      date: form.date,
+      department: form.department,
+      task_description: form.task_description,
+      skills_learned: form.skills_learned,
+      hours_worked: form.hours_worked,
+      challenges_faced: form.challenges_faced,
+      supervisor_comments: "Pending review",
+      status: "submitted",
     };
-
-    setLogs((prev) => [...prev, newLog]);
+    addMockLog(newLog);
+    setLogs([newLog, ...logs]);
     setShowNew(false);
     setForm({
-      activities: "",
-      learningOutcomes: "",
-      challenges: "",
-      hoursWorked: 0,
+      date: "",
+      department: "",
+      task_description: "",
+      skills_learned: "",
+      hours_worked: "",
+      challenges_faced: "",
+      attachments: null,
     });
+  };
+
+  const handleFileChange = (e) => {
+    setForm({ ...form, attachments: e.target.files[0] });
+  };
+
+  // Edit handlers
+  const openEdit = (log) => {
+    setEditLog(log);
+    setEditForm({
+      date: log.date || "",
+      department: log.department || "",
+      task_description: log.task_description || log.activities || "",
+      skills_learned: log.skills_learned || log.learningOutcomes || "",
+      hours_worked: log.hours_worked || log.hoursWorked || "",
+      challenges_faced: log.challenges_faced || log.challenges || "",
+      attachments: null,
+    });
+  };
+
+  const handleEditChange = (e) => {
+    setEditForm({ ...editForm, [e.target.name]: e.target.value });
+  };
+
+  const handleEditFileChange = (e) => {
+    setEditForm({ ...editForm, attachments: e.target.files[0] });
+  };
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    if (!editLog) return;
+    const updated = {
+      ...editLog,
+      date: editForm.date,
+      department: editForm.department,
+      task_description: editForm.task_description,
+      skills_learned: editForm.skills_learned,
+      hours_worked: editForm.hours_worked,
+      challenges_faced: editForm.challenges_faced,
+    };
+    updateMockLog(editLog.id, updated);
+    setLogs(mockLogs.filter((l) => l.studentId === demoStudentId));
+    setEditLog(null);
+    setEditForm({});
+  };
+
+  const handleDelete = (id) => {
+    deleteMockLog(id);
+    setLogs(mockLogs.filter((l) => l.studentId === demoStudentId));
   };
 
   return (
     <AppLayout>
-      <div className="logbook-root">
-        <div className="logbook-header-row">
+      <div className="relative min-h-screen w-full bg-gradient-to-br from-[#0f2027] via-[#2c5364] to-[#232526] py-12 px-2 flex flex-col items-center">
+        <div className="w-full max-w-4xl mx-auto flex flex-col gap-10">
+          {/* Header */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: -24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl px-8 py-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
           >
-            <div className="logbook-kicker">
-              <NotebookPen className="logbook-kicker-icon" />
-              <span>Logbook</span>
-            </div>
-            <h1 className="logbook-title">Weekly Logbook</h1>
-            <p className="logbook-subtitle">
-              Document your internship activities each week
-            </p>
-          </motion.div>
-          <motion.button
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            onClick={() => setShowNew(true)}
-            className="logbook-new-btn"
-          >
-            <Plus className="logbook-new-btn-icon" />
-            New Entry
-          </motion.button>
-        </div>
-
-        <AnimatePresence>
-          {showNew && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, height: 0 }}
-              animate={{ opacity: 1, y: 0, height: "auto" }}
-              exit={{ opacity: 0, y: -10, height: 0 }}
-              className="logbook-new-card"
-            >
-              <div className="logbook-new-header">
-                <h3>New Log Entry</h3>
-                <button
-                  type="button"
-                  onClick={() => setShowNew(false)}
-                  className="logbook-new-close"
-                >
-                  <X className="logbook-new-close-icon" />
-                </button>
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <NotebookPen className="w-6 h-6 text-yellow-400 drop-shadow" />
+                <span className="text-lg font-bold tracking-widest text-yellow-300 uppercase drop-shadow">
+                  Weekly Logbook
+                </span>
               </div>
-              <div className="logbook-new-body">
-                <div>
-                  <label>Activities Performed</label>
-                  <textarea
-                    value={form.activities}
-                    onChange={(e) =>
-                      setForm({ ...form, activities: e.target.value })
-                    }
-                    rows={3}
-                    className="logbook-input"
-                    placeholder="Describe what you did this week..."
-                  />
-                </div>
-                <div>
-                  <label>Learning Outcomes</label>
-                  <textarea
-                    value={form.learningOutcomes}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        learningOutcomes: e.target.value,
-                      })
-                    }
-                    rows={2}
-                    className="logbook-input"
-                    placeholder="What did you learn?"
-                  />
-                </div>
-                <div>
-                  <label>Challenges</label>
-                  <textarea
-                    value={form.challenges}
-                    onChange={(e) =>
-                      setForm({ ...form, challenges: e.target.value })
-                    }
-                    rows={2}
-                    className="logbook-input"
-                    placeholder="Any challenges faced?"
-                  />
-                </div>
-                <div>
-                  <label>Hours Worked</label>
-                  <input
-                    type="number"
-                    value={form.hoursWorked}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        hoursWorked: Number(e.target.value),
-                      })
-                    }
-                    className="logbook-input logbook-input-hours"
-                  />
-                </div>
-                <div className="logbook-new-actions">
-                  <button
-                    type="button"
-                    onClick={handleNewLog}
-                    className="logbook-btn-primary"
-                  >
-                    Save as Draft
-                  </button>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow mb-2">
+                Internship Activity Log
+              </h1>
+              <p className="text-lg text-white/70 font-medium">
+                Record your weekly internship activities and progress
+              </p>
+            </div>
+            <motion.button
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              onClick={() => setShowNew(true)}
+              className="rounded-xl bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] font-bold px-6 py-3 shadow-lg hover:scale-105 transition-all text-lg"
+            >
+              <Plus className="w-5 h-5 mr-2 inline-block" /> Add New Log
+            </motion.button>
+          </motion.div>
+
+          {/* New Log Modal */}
+          <AnimatePresence>
+            {showNew && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7 mb-4"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-white">
+                    New Log Entry
+                  </h3>
                   <button
                     type="button"
                     onClick={() => setShowNew(false)}
-                    className="logbook-btn-secondary"
+                    className="text-white/70 hover:text-yellow-300 transition"
                   >
-                    Cancel
+                    <X className="w-6 h-6" />
                   </button>
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <form
+                  onSubmit={handleSubmit}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-5"
+                >
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">Date</label>
+                    <input
+                      type="date"
+                      value={form.date}
+                      onChange={(e) =>
+                        setForm({ ...form, date: e.target.value })
+                      }
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">Department</label>
+                    <input
+                      type="text"
+                      value={form.department}
+                      onChange={(e) =>
+                        setForm({ ...form, department: e.target.value })
+                      }
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="e.g., IT Department"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      Task Description
+                    </label>
+                    <textarea
+                      value={form.task_description}
+                      onChange={(e) =>
+                        setForm({ ...form, task_description: e.target.value })
+                      }
+                      rows={2}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="Describe the tasks performed..."
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      Skills Learned
+                    </label>
+                    <textarea
+                      value={form.skills_learned}
+                      onChange={(e) =>
+                        setForm({ ...form, skills_learned: e.target.value })
+                      }
+                      rows={2}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="What skills did you learn?"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">
+                      Hours Worked
+                    </label>
+                    <input
+                      type="number"
+                      step="0.5"
+                      value={form.hours_worked}
+                      onChange={(e) =>
+                        setForm({ ...form, hours_worked: e.target.value })
+                      }
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      Challenges Faced
+                    </label>
+                    <textarea
+                      value={form.challenges_faced}
+                      onChange={(e) =>
+                        setForm({ ...form, challenges_faced: e.target.value })
+                      }
+                      rows={2}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="Any challenges faced?"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      File Attachment
+                    </label>
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                    />
+                  </div>
+                  <div className="flex gap-3 md:col-span-2 mt-2">
+                    <button
+                      type="submit"
+                      className="rounded-xl bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] font-bold px-6 py-2 shadow hover:scale-105 transition-all"
+                    >
+                      Submit Log
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowNew(false)}
+                      className="rounded-xl bg-white/10 text-white border border-white/20 px-6 py-2 font-bold hover:bg-white/20 transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        <div className="logbook-list">
-          {logs.map((log, index) => (
-            <motion.div
-              key={log.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="logbook-card"
-            >
-              <div className="logbook-card-header">
-                <div className="logbook-card-main">
-                  <div className="logbook-week-pill">
-                    <span>W{log.weekNumber}</span>
-                  </div>
-                  <div>
-                    <p className="logbook-card-title">
-                      Week {log.weekNumber}
-                    </p>
-                    <p className="logbook-card-dates">
-                      {log.startDate} — {log.endDate}
-                    </p>
-                  </div>
-                </div>
-                <div className="logbook-card-meta">
-                  <span className="logbook-card-hours">
-                    {log.hoursWorked}h
-                  </span>
-                  <span
-                    className={`status-badge ${
-                      statusColors[log.status]?.bg || ""
-                    } ${statusColors[log.status]?.text || ""}`}
+          {/* Static Logbook Table (as requested) */}
+          <div className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7 mb-8">
+            <h2 className="text-xl font-bold text-white mb-4">
+              Logbook Entries
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm text-white/90">
+                <thead>
+                  <tr className="bg-white/10">
+                    <th className="px-4 py-2 text-left font-bold">Date</th>
+                    <th className="px-4 py-2 text-left font-bold">Tasks</th>
+                    <th className="px-4 py-2 text-left font-bold">Hours</th>
+                    <th className="px-4 py-2 text-left font-bold">Status</th>
+                    <th className="px-4 py-2 text-left font-bold">
+                      Supervisor Comments
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="px-4 py-2">Week 1</td>
+                    <td className="px-4 py-2">
+                      Onboarded to the team, set up development environment, and
+                      reviewed existing codebase.
+                    </td>
+                    <td className="px-4 py-2">38</td>
+                    <td className="px-4 py-2">
+                      <span className="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-500/80 text-white">
+                        approved
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">Good start to the internship.</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2">Week 2</td>
+                    <td className="px-4 py-2">
+                      Implemented new feature module and wrote unit tests for
+                      existing components.
+                    </td>
+                    <td className="px-4 py-2">40</td>
+                    <td className="px-4 py-2">
+                      <span className="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-500/80 text-white">
+                        approved
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">
+                      Nicely written tests and clean code.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2">Week 3</td>
+                    <td className="px-4 py-2">
+                      Participated in sprint planning and supported bug fixes
+                      reported by QA.
+                    </td>
+                    <td className="px-4 py-2">39</td>
+                    <td className="px-4 py-2">
+                      <span className="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-yellow-400/80 text-[#232526]">
+                        submitted
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">N/A</td>
+                  </tr>
+                  <tr>
+                    <td className="px-4 py-2">Week 4</td>
+                    <td className="px-4 py-2">
+                      Refactored legacy components for performance and
+                      accessibility improvements.
+                    </td>
+                    <td className="px-4 py-2">41</td>
+                    <td className="px-4 py-2">
+                      <span className="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-500/80 text-white">
+                        approved
+                      </span>
+                    </td>
+                    <td className="px-4 py-2">
+                      Great progress this month; keep documenting your work
+                      clearly.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Editable Logbook Table (CRUD) */}
+          <div className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7">
+            <h2 className="text-xl font-bold text-white mb-4">
+              Your Logbook Entries
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-sm text-white/90">
+                <thead>
+                  <tr className="bg-white/10">
+                    <th className="px-4 py-2 text-left font-bold">Date</th>
+                    <th className="px-4 py-2 text-left font-bold">Tasks</th>
+                    <th className="px-4 py-2 text-left font-bold">Hours</th>
+                    <th className="px-4 py-2 text-left font-bold">Status</th>
+                    <th className="px-4 py-2 text-left font-bold">
+                      Supervisor Comments
+                    </th>
+                    <th className="px-4 py-2 text-left font-bold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {logs.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="text-center py-6 text-white/60"
+                      >
+                        No log entries yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    logs.map((log) => (
+                      <tr
+                        key={log.id}
+                        className="border-b border-white/10 hover:bg-white/10 transition"
+                      >
+                        <td className="px-4 py-2">
+                          {log.date || `Week ${log.weekNumber}`}
+                          <div className="text-xs text-yellow-200 mt-1">
+                            Deadline: {log.endDate || "-"}
+                            {isPastDeadline(log) && (
+                              <span className="ml-2 text-red-400 font-bold">
+                                (Past)
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-2 max-w-xs truncate">
+                          {log.task_description || log.activities}
+                        </td>
+                        <td className="px-4 py-2">
+                          {log.hours_worked || log.hoursWorked}
+                        </td>
+                        <td className="px-4 py-2">
+                          <span
+                            className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${statusColors[log.status]?.bg} ${statusColors[log.status]?.text}`}
+                          >
+                            {log.status}
+                          </span>
+                          <button
+                            className="ml-2 underline text-xs text-cyan-200 hover:text-cyan-100"
+                            onClick={() => setHistoryLog(log)}
+                          >
+                            History
+                          </button>
+                        </td>
+                        <td className="px-4 py-2">
+                          {log.supervisor_comments ||
+                            log.supervisorComment ||
+                            "N/A"}
+                        </td>
+                        <td className="px-4 py-2 flex gap-2">
+                          <button
+                            onClick={() => openEdit(log)}
+                            className="px-3 py-1 rounded bg-yellow-400/80 text-[#232526] font-bold hover:bg-yellow-300 transition disabled:opacity-50"
+                            disabled={isLocked(log)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(log.id)}
+                            className="px-3 py-1 rounded bg-red-500/80 text-white font-bold hover:bg-red-400 transition disabled:opacity-50"
+                            disabled={isLocked(log)}
+                          >
+                            Delete
+                          </button>
+                        </td>
+                        {/* Log History Modal */}
+                        <AnimatePresence>
+                          {historyLog && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10, height: 0 }}
+                              animate={{ opacity: 1, y: 0, height: "auto" }}
+                              exit={{ opacity: 0, y: -10, height: 0 }}
+                              className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7 mb-4 fixed top-0 left-0 right-0 z-50 max-w-lg mx-auto mt-24"
+                            >
+                              <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold text-white">
+                                  Log Status History
+                                </h3>
+                                <button
+                                  type="button"
+                                  onClick={() => setHistoryLog(null)}
+                                  className="text-white/70 hover:text-yellow-300 transition"
+                                >
+                                  <X className="w-6 h-6" />
+                                </button>
+                              </div>
+                              <div className="mb-2">
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Status:</b>{" "}
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs font-semibold ${statusColors[historyLog.status]?.bg} ${statusColors[historyLog.status]?.text}`}
+                                  >
+                                    {historyLog.status}
+                                  </span>
+                                </div>
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Supervisor Comment:</b>{" "}
+                                  {historyLog.supervisor_comments ||
+                                    historyLog.supervisorComment ||
+                                    "N/A"}
+                                </div>
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Deadline:</b> {historyLog.endDate || "-"}{" "}
+                                  {isPastDeadline(historyLog) && (
+                                    <span className="ml-2 text-red-400 font-bold">
+                                      (Past)
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="mb-2 text-sm text-white/80">
+                                  <b>Hours Worked:</b>{" "}
+                                  {historyLog.hours_worked ||
+                                    historyLog.hoursWorked}
+                                </div>
+                                {/* Demo static history */}
+                                <div className="mt-4">
+                                  <b className="text-white/90">
+                                    Status History (Demo):
+                                  </b>
+                                  <ul className="list-disc ml-6 mt-2 text-xs text-white/70">
+                                    <li>
+                                      Draft → Submitted (
+                                      {historyLog.startDate || "-"})
+                                    </li>
+                                    {historyLog.status === "approved" && (
+                                      <li>
+                                        Submitted → Approved (
+                                        {historyLog.endDate || "-"})
+                                      </li>
+                                    )}
+                                    {historyLog.status === "submitted" && (
+                                      <li>Awaiting review</li>
+                                    )}
+                                  </ul>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Edit Log Modal */}
+          <AnimatePresence>
+            {editLog && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, height: 0 }}
+                animate={{ opacity: 1, y: 0, height: "auto" }}
+                exit={{ opacity: 0, y: -10, height: 0 }}
+                className="rounded-2xl bg-white/20 backdrop-blur-lg border border-white/20 shadow-xl p-7 mb-4 fixed top-0 left-0 right-0 z-50 max-w-lg mx-auto mt-24"
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-xl font-bold text-white">
+                    Edit Log Entry
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => setEditLog(null)}
+                    className="text-white/70 hover:text-yellow-300 transition"
                   >
-                    {log.status}
-                  </span>
+                    <X className="w-6 h-6" />
+                  </button>
                 </div>
-              </div>
-
-              {editing === log.id ? (
-                <div className="logbook-edit-placeholder">
-                  Editing mode placeholder...
-                </div>
-              ) : (
-                <div className="logbook-card-body">
-                  <div className="logbook-section">
-                    <p className="logbook-section-label">Activities</p>
-                    <p className="logbook-section-text">
-                      {log.activities}
-                    </p>
+                <form
+                  onSubmit={handleEditSubmit}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-5"
+                >
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">Date</label>
+                    <input
+                      name="date"
+                      type="date"
+                      value={editForm.date}
+                      onChange={handleEditChange}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      required
+                    />
                   </div>
-                  <div className="logbook-double-grid">
-                    <div className="logbook-section">
-                      <p className="logbook-section-label logbook-section-label--green">
-                        Learning Outcomes
-                      </p>
-                      <p className="logbook-section-text">
-                        {log.learningOutcomes}
-                      </p>
-                    </div>
-                    <div className="logbook-section">
-                      <p className="logbook-section-label logbook-section-label--amber">
-                        Challenges
-                      </p>
-                      <p className="logbook-section-text">
-                        {log.challenges}
-                      </p>
-                    </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">Department</label>
+                    <input
+                      name="department"
+                      type="text"
+                      value={editForm.department}
+                      onChange={handleEditChange}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="e.g., IT Department"
+                      required
+                    />
                   </div>
-                  {log.supervisorComment && (
-                    <div className="logbook-supervisor">
-                      <p className="logbook-supervisor-label">
-                        Supervisor Comment
-                      </p>
-                      <p className="logbook-supervisor-text">
-                        {log.supervisorComment}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {(log.status === "draft" || log.status === "reviewed") && (
-                <div className="logbook-actions-row">
-                  {log.status === "draft" && (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setEditing(
-                            editing === log.id ? null : log.id
-                          )
-                        }
-                        className="logbook-btn-secondary logbook-btn-small"
-                      >
-                        <Edit3 className="logbook-btn-small-icon" />
-                        Edit
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSubmitLog(log.id)}
-                        className="logbook-btn-primary logbook-btn-small"
-                      >
-                        <Send className="logbook-btn-small-icon" />
-                        Submit
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
-
-              {log.status === "approved" && (
-                <div className="logbook-locked-row">
-                  <Lock className="logbook-locked-icon" />
-                  <span>Locked — Approved by supervisor</span>
-                </div>
-              )}
-            </motion.div>
-          ))}
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      Task Description
+                    </label>
+                    <textarea
+                      name="task_description"
+                      value={editForm.task_description}
+                      onChange={handleEditChange}
+                      rows={2}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="Describe the tasks performed..."
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      Skills Learned
+                    </label>
+                    <textarea
+                      name="skills_learned"
+                      value={editForm.skills_learned}
+                      onChange={handleEditChange}
+                      rows={2}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="What skills did you learn?"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-xs text-white/70">
+                      Hours Worked
+                    </label>
+                    <input
+                      name="hours_worked"
+                      type="number"
+                      step="0.5"
+                      value={editForm.hours_worked}
+                      onChange={handleEditChange}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      Challenges Faced
+                    </label>
+                    <textarea
+                      name="challenges_faced"
+                      value={editForm.challenges_faced}
+                      onChange={handleEditChange}
+                      rows={2}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                      placeholder="Any challenges faced?"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 md:col-span-2">
+                    <label className="text-xs text-white/70">
+                      File Attachment
+                    </label>
+                    <input
+                      name="attachments"
+                      type="file"
+                      onChange={handleEditFileChange}
+                      className="rounded-lg px-3 py-2 bg-white/10 text-white border border-white/20 focus:border-yellow-400 outline-none"
+                    />
+                  </div>
+                  <div className="flex gap-3 md:col-span-2 mt-2">
+                    <button
+                      type="submit"
+                      className="rounded-xl bg-gradient-to-r from-yellow-400 via-emerald-400 to-cyan-400 text-[#232526] font-bold px-6 py-2 shadow hover:scale-105 transition-all"
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditLog(null)}
+                      className="rounded-xl bg-white/10 text-white border border-white/20 px-6 py-2 font-bold hover:bg-white/20 transition"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+        {/* Ambient Glow Effects */}
+        <div className="pointer-events-none fixed top-0 left-0 w-full h-full z-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[400px] h-[400px] bg-gradient-to-br from-yellow-400 via-emerald-400 to-cyan-400 opacity-30 blur-[120px] rounded-full" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-gradient-to-br from-cyan-400 via-emerald-400 to-yellow-400 opacity-20 blur-[120px] rounded-full" />
         </div>
       </div>
     </AppLayout>
@@ -318,4 +689,3 @@ const WeeklyLogbook = () => {
 };
 
 export default WeeklyLogbook;
-

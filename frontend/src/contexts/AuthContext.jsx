@@ -1,72 +1,66 @@
-import React, { createContext, useContext, useState } from 'react';
-
+import React, { createContext, useContext, useState } from "react";
+import { mockUsers } from "@/data/mockData";
 
 const AuthContext = createContext();
 
-const API_URL = 'http://127.0.0.1:8000/api';
-
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Try to load user from localStorage on first render
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem("iles_user");
+    return stored ? JSON.parse(stored) : null;
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => !!localStorage.getItem("iles_user"),
+  );
 
-   const signIn = async (email, password) => {
-    try {
-      const response = await fetch(`${API_URL}/auth/login/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
-        setUser(data.user);
-        setIsAuthenticated(true);
-        return { success: true, role: data.user.role, user: data.user };
-      } else {
-        return { success: false, error: data.error || 'Login failed.' };
-      }
-    } catch (error) {
-      return { success: false, error: 'Could not connect to server.' };
+  // Mock signIn: check against mockUsers for authentication and role assignment
+  const signIn = async (email, password) => {
+    if (!email || !password) {
+      return { success: false, error: "Email and password required." };
     }
+    const found = mockUsers.find(
+      (u) => u.email === email && u.password === password,
+    );
+    if (!found) {
+      return { success: false, error: "Invalid email or password." };
+    }
+    const user = { ...found };
+    setUser(user);
+    setIsAuthenticated(true);
+    localStorage.setItem("iles_user", JSON.stringify(user));
+    return { success: true, role: user.role, user };
   };
 
-   const signUp = async (name, email, password, role) => {
-    try {
-      const response = await fetch(`${API_URL}/auth/register/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ full_name: name, email, password, role }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('access_token', data.access);
-        localStorage.setItem('refresh_token', data.refresh);
-        setUser(data.user);
-        setIsAuthenticated(true);
-        return { success: true, role: data.user.role, user: data.user };
-      } else {
-        const errorMsg = data.email?.[0] || data.password?.[0] || 'Sign up failed.';
-        return { success: false, error: errorMsg };
-      }
-    } catch (error) {
-      return { success: false, error: 'Could not connect to server.' };
+  // Mock signUp: accept any data, store user in state
+  const signUp = async (name, email, password, role) => {
+    if (!name || !email || !password || !role) {
+      return { success: false, error: "All fields required." };
     }
+    if (password.length < 6) {
+      return {
+        success: false,
+        error: "Password must be at least 6 characters.",
+      };
+    }
+    const user = { full_name: name, email, role };
+    setUser(user);
+    setIsAuthenticated(true);
+    localStorage.setItem("iles_user", JSON.stringify(user));
+    return { success: true, role, user };
   };
 
   const signOut = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("iles_user");
     setUser(null);
     setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn, signUp, signOut }}>
+    <AuthContext.Provider
+      value={{ user, isAuthenticated, signIn, signUp, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -75,7 +69,7 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
