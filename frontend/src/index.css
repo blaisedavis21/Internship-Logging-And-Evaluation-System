@@ -1,3 +1,8 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+@layer utilities {
+  .gradient-hero {
+    background: radial-gradient(circle at top center, #0f172a 0%, #020617 100%);
+  }
+  
