@@ -324,22 +324,19 @@ const StudentDashboard = () => {
         <div className="w-full flex justify-center gap-3 mt-12 mb-2">
           <a
             href="/student/logbook"
-            className="px-4 py-2 text-sm rounded bg-yellow-100 text-[#232526] border border-yellow-300 hover:bg-yellow-200 transition font-bold shadow"
-            style={{ textShadow: "0 1px 2px #fff, 0 0px 1px #facc15" }}
+            className="px-4 py-2 text-sm rounded-md bg-amber-500 text-white border border-amber-400 hover:bg-amber-400 transition font-bold shadow-md"
           >
             Log New Week
           </a>
           <a
             href="/student/placement"
-            className="px-4 py-2 text-sm rounded bg-emerald-50 text-[#232526] border border-emerald-200 hover:bg-emerald-100 transition font-bold shadow"
-            style={{ textShadow: "0 1px 2px #fff, 0 0px 1px #34d399" }}
+            className="px-4 py-2 text-sm rounded-md bg-emerald-600 text-white border border-emerald-500 hover:bg-emerald-500 transition font-bold shadow-md"
           >
             View Placement
           </a>
           <a
             href="/student/scores"
-            className="px-4 py-2 text-sm rounded bg-cyan-50 text-[#232526] border border-cyan-200 hover:bg-cyan-100 transition font-bold shadow"
-            style={{ textShadow: "0 1px 2px #fff, 0 0px 1px #22d3ee" }}
+            className="px-4 py-2 text-sm rounded-md bg-cyan-600 text-white border border-cyan-500 hover:bg-cyan-500 transition font-bold shadow-md"
           >
             View Scores
           </a>
