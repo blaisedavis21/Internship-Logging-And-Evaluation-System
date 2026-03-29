@@ -309,6 +309,8 @@ const StudentDashboard = () => {
                         {log.hoursWorked}h
                       </span>
                       <span
+
+                      
                         className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${statusColors[log.status]?.bg} ${statusColors[log.status]?.text}`}
                       >
                         {log.status}
