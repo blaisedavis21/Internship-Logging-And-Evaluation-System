@@ -67,4 +67,3 @@ const StudentNotifications = () => (
 );
 
 export default StudentNotifications;
-
