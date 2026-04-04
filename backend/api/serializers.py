@@ -47,7 +47,7 @@ class SupervisorReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = SupervisorReview
         fields = ['id', 'log', 'supervisor', 'supervisor_name', 'comment', 'status', 'reviewed_at']
-        read_only_fields = ['reviewed_at']
+        read_only_fields = ['supervisor', 'reviewed_at']
 
         
 class EvaluationSerializer(serializers.ModelSerializer):
