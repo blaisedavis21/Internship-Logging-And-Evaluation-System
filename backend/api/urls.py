@@ -25,6 +25,8 @@ urlpatterns = [
     # Evaluations
     path('evaluations/', views.evaluation_list, name='evaluation_list'),
 
+    path('dashboard/', views.dashboard, name='dashboard'),
+
 ]
 
 
