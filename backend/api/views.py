@@ -51,6 +51,14 @@ def dashboard(request):
             'approved_logs': approved_logs,
         })
 
+    elif user.role == 'admin':
+        total_students = CustomUser.objects.filter(role='student').count()
+        total_supervisors = CustomUser.objects.filter(role='workplace_supervisor').count()
+        total_placements = InternshipPlacement.objects.count()
+        total_logs = WeeklyLog.objects.count()
+        pending_reviews = WeeklyLog.objects.filter(status='submitted').count()
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
