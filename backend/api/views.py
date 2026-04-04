@@ -45,7 +45,12 @@ def dashboard(request):
         evaluations_given = Evaluation.objects.filter(evaluator=user).count()
         approved_logs = WeeklyLog.objects.filter(status='approved').count()
 
-# ── AUTH ──
+        return Response({
+            'total_students': total_students,
+            'evaluations_given': evaluations_given,
+            'approved_logs': approved_logs,
+        })
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
