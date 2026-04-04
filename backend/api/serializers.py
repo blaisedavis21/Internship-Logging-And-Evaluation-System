@@ -60,3 +60,7 @@ class EvaluationSerializer(serializers.ModelSerializer):
         read_only_fields = ['date']
 
 
+
+
+
+
