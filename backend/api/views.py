@@ -10,7 +10,7 @@ from .serializers import (
     InternshipPlacementSerializer, WeeklyLogSerializer,
     SupervisorReviewSerializer, EvaluationSerializer
 )
-from .models import InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation
+from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation
 
 @api_view(['GET'])
 def dashboard(request):
@@ -58,6 +58,16 @@ def dashboard(request):
         total_logs = WeeklyLog.objects.count()
         pending_reviews = WeeklyLog.objects.filter(status='submitted').count()
 
+
+        return Response({
+            'total_students': total_students,
+            'total_supervisors': total_supervisors,
+            'total_placements': total_placements,
+            'total_logs': total_logs,
+            'pending_reviews': pending_reviews,
+        })
+
+    return Response({'error': 'Invalid role'}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
