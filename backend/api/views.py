@@ -146,7 +146,12 @@ def placement_detail(request, pk):
         return Response(serializer.data)
 
     if request.method == 'PUT':
-        serializer = InternshipPlacementSerializer(placement, data=request.data)
+        data = request.data.copy()
+        if data.get('academic_supervisor') == '':
+            data['academic_supervisor'] = None
+        if data.get('workplace_supervisor') == '':
+            data['workplace_supervisor'] = None
+        serializer = InternshipPlacementSerializer(placement, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
