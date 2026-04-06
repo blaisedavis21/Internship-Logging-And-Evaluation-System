@@ -28,16 +28,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 class InternshipPlacementSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
-    workplace_supervisor_name = serializers.CharField(source='workplace_supervisor.full_name', read_only=True)
     academic_supervisor_name = serializers.CharField(source='academic_supervisor.full_name', read_only=True)
+    workplace_supervisor_name = serializers.CharField(source='workplace_supervisor.full_name', read_only=True)
 
     class Meta:
         model = InternshipPlacement
         fields = [
-            'id', 'student', 'student_name', 'company', 'department',
-            'workplace_supervisor', 'workplace_supervisor_name',
+            'id', 'student', 'student_name',
             'academic_supervisor', 'academic_supervisor_name',
-            'start_date', 'end_date', 'status', 'created_at'
+            'workplace_supervisor', 'workplace_supervisor_name',
+            'company', 'start_date', 'end_date', 'status', 'created_at'
         ]
         read_only_fields = ['created_at']
 
