@@ -26,7 +26,10 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'full_name', 'email', 'role']
         read_only_fields = ['email']
 
-
+class InternshipPlacementSerializer(serializers.ModelSerializer):
+    student_name = serializers.CharField(source='student.full_name', read_only=True)
+    workplace_supervisor_name = serializers.CharField(source='workplace_supervisor.full_name', read_only=True)
+    academic_supervisor_name = serializers.CharField(source='academic_supervisor.full_name', read_only=True)
 
 class WeeklyLogSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.full_name', read_only=True)
