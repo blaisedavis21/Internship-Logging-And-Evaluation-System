@@ -32,14 +32,19 @@ class InternshipPlacement(models.Model):
         related_name='placements',
         limit_choices_to={'role': 'student'}
     )
-
     academic_supervisor = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        null=True, blank=True,
         related_name='supervised_placements',
         limit_choices_to={'role': 'academic_supervisor'}
+    )
+    workplace_supervisor = models.ForeignKey(
+        CustomUser,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='workplace_placements',
+        limit_choices_to={'role': 'workplace_supervisor'}
     )
     company = models.CharField(max_length=255)
     start_date = models.DateField()
@@ -49,7 +54,7 @@ class InternshipPlacement(models.Model):
 
     def __str__(self):
         return f"{self.student.full_name} - {self.company}"
-    
+
 class WeeklyLog(models.Model):
     STATUS_CHOICES = [
         ('draft', 'Draft'),
