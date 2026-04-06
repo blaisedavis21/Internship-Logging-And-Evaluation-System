@@ -93,23 +93,25 @@ const EMPTY_FORM = {
   workplace_supervisor: "",
 };
 
-const PlacementModal = ({ open, onClose, onSave, editPlacement, students }) => {
+const PlacementModal = ({ open, onClose, onSave, editPlacement, students, academicSupervisors, workplaceSupervisors }) => {
   const [form, setForm] = useState(EMPTY_FORM);
   const isEdit = !!editPlacement;
 
-  useEffect(() => {
-    if (editPlacement) {
-      setForm({
-        student: editPlacement.student,
-        company: editPlacement.company,
-        start_date: editPlacement.start_date,
-        end_date: editPlacement.end_date,
-        status: editPlacement.status,
-      });
-    } else {
-      setForm(EMPTY_FORM);
-    }
-  }, [editPlacement, open]);
+useEffect(() => {
+  if (editPlacement) {
+    setForm({
+      student: editPlacement.student,
+      company: editPlacement.company,
+      start_date: editPlacement.start_date,
+      end_date: editPlacement.end_date,
+      status: editPlacement.status,
+      academic_supervisor: editPlacement.academic_supervisor || "",
+      workplace_supervisor: editPlacement.workplace_supervisor || "",
+    });
+  } else {
+    setForm(EMPTY_FORM);
+  }
+}, [editPlacement, open]);
 
   const valid = form.student && form.company && form.start_date && form.end_date;
   const f = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }));
