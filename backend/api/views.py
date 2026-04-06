@@ -162,7 +162,6 @@ def placement_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# ── WEEKLY LOG ──
 @api_view(['GET', 'POST'])
 def log_list(request):
     if request.method == 'GET':
@@ -183,6 +182,8 @@ def log_list(request):
             logs = WeeklyLog.objects.filter(student__in=assigned_students)
         else:
             logs = WeeklyLog.objects.all()
+        serializer = WeeklyLogSerializer(logs, many=True)
+        return Response(serializer.data)
 
     if request.method == 'POST':
         serializer = WeeklyLogSerializer(data=request.data)
@@ -190,7 +191,6 @@ def log_list(request):
             serializer.save(student=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['GET', 'PUT'])
 def log_detail(request, pk):
