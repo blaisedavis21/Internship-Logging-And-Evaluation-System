@@ -282,6 +282,8 @@ const PlacementManagement = () => {
       ]);
       setPlacements(Array.isArray(placementsData) ? placementsData : []);
       setStudents(Array.isArray(studentsData) ? studentsData : []);
+      setAcademicSupervisors(Array.isArray(academicData) ? academicData : []);
+      setWorkplaceSupervisors(Array.isArray(workplaceData) ? workplaceData : []);
     } catch (err) {
       showToast(err.message || 'Failed to load data.', 'error');
     } finally {
