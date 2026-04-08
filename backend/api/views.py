@@ -5,12 +5,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
+from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation, CriteriaScore
 from .serializers import (
     RegisterSerializer, UserSerializer,
     InternshipPlacementSerializer, WeeklyLogSerializer,
-    SupervisorReviewSerializer, EvaluationSerializer
+    SupervisorReviewSerializer, EvaluationSerializer, CriteriaScoreSerializer
 )
-from .models import CustomUser, InternshipPlacement, WeeklyLog, SupervisorReview, Evaluation
 
 @api_view(['GET'])
 def dashboard(request):
