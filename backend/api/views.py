@@ -316,8 +316,7 @@ def evaluation_list(request):
         # Set evaluation type based on role
         evaluation_type = 'workplace' if request.user.role == 'workplace_supervisor' else 'academic'
 
-
-    # Expected criteria based on type
+        # Expected criteria based on type
         WORKPLACE_CRITERIA = [
             {'criteria': 'technical_competence', 'max_score': 20},
             {'criteria': 'professionalism', 'max_score': 20},
@@ -335,6 +334,32 @@ def evaluation_list(request):
 
         criteria_list = WORKPLACE_CRITERIA if evaluation_type == 'workplace' else ACADEMIC_CRITERIA
         criteria_data = request.data.get('criteria_scores', [])
+
+        # Inject evaluation type
+        data = request.data.copy()
+        data['evaluation_type'] = evaluation_type
+
+        serializer = EvaluationSerializer(data=data)
+        if serializer.is_valid():
+            evaluation = serializer.save(evaluator=request.user)
+
+            # Save each criterion score
+            for criterion in criteria_list:
+                score_entry = next(
+                    (c for c in criteria_data if c.get('criteria') == criterion['criteria']), None
+                )
+                score_value = score_entry.get('score', 0) if score_entry else 0
+                score_value = min(score_value, criterion['max_score'])
+                CriteriaScore.objects.create(
+                    evaluation=evaluation,
+                    criteria=criterion['criteria'],
+                    score=score_value,
+                    max_score=criterion['max_score']
+                )
+
+            return Response(EvaluationSerializer(evaluation).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 # ── ADMIN ──
 @api_view(['GET'])
