@@ -249,6 +249,20 @@ def review_list(request):
                 status=status.HTTP_403_FORBIDDEN
             )
 
+
+        # Expected criteria for logbook review
+        LOGBOOK_CRITERIA = [
+            {'criteria': 'quality_of_work', 'max_score': 10},
+            {'criteria': 'initiative', 'max_score': 10},
+            {'criteria': 'punctuality', 'max_score': 10},
+        ]
+
+        criteria_data = request.data.get('criteria_scores', [])
+
+        serializer = SupervisorReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            review = serializer.save(supervisor=request.user)
+
 # ── EVALUATION ──
 @api_view(['GET', 'POST'])
 def evaluation_list(request):
