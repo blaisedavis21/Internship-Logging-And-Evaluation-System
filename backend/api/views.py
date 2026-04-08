@@ -415,7 +415,7 @@ def student_score(request, student_id):
 
     # ── Workplace Evaluation (40%) ──
     try:
-        workplace_eval = Evaluation.objects.get(student=student, evaluation_type='workplace')
+        workplace_eval = Evaluation.objects.filter(student=student, evaluation_type='workplace').first()
         workplace_total = workplace_eval.total_score()
         workplace_max = 100
         workplace_contribution = (workplace_total / workplace_max) * 40
@@ -425,7 +425,7 @@ def student_score(request, student_id):
 
     # ── Academic Evaluation (30%) ──
     try:
-        academic_eval = Evaluation.objects.get(student=student, evaluation_type='academic')
+        academic_eval = Evaluation.objects.filter(student=student, evaluation_type='academic').first()
         academic_total = academic_eval.total_score()
         academic_max = 100
         academic_contribution = (academic_total / academic_max) * 30
