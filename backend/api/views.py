@@ -263,6 +263,22 @@ def review_list(request):
         if serializer.is_valid():
             review = serializer.save(supervisor=request.user)
 
+
+        # Save each criterion score
+            for criterion in LOGBOOK_CRITERIA:
+                score_entry = next(
+                    (c for c in criteria_data if c.get('criteria') == criterion['criteria']), None
+                )
+                score_value = score_entry.get('score', 0) if score_entry else 0
+                # Clamp score to max
+                score_value = min(score_value, criterion['max_score'])
+                CriteriaScore.objects.create(
+                    review=review,
+                    criteria=criterion['criteria'],
+                    score=score_value,
+                    max_score=criterion['max_score']
+                )
+
 # ── EVALUATION ──
 @api_view(['GET', 'POST'])
 def evaluation_list(request):
