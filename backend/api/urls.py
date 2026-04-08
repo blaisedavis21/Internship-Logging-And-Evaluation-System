@@ -32,6 +32,8 @@ path('users/', views.user_list, name='user_list'),
 path('users/<int:pk>/', views.user_detail, name='user_detail'),
 path('users/role/<str:role>/', views.users_by_role, name='users_by_role'),
 
+path('scores/<int:student_id>/', views.student_score, name='student_score'),
+
 ]
 
 
