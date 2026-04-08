@@ -110,11 +110,15 @@ class SupervisorReview(models.Model):
         related_name='reviews',
         limit_choices_to={'role': 'workplace_supervisor'}
     )
-    comment = models.TextField()
+    comment = models.TextField(blank=True, default='')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='reviewed')
     reviewed_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return f"Review for {self.log} by {self.supervisor.full_name}"
+
+    def total_score(self):
+        return sum(cs.score for cs in self.criteria_scores.all())
     
 class Evaluation(models.Model):
     TYPE_CHOICES = [
