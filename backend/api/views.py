@@ -404,3 +404,21 @@ def users_by_role(request, role):
     users = CustomUser.objects.filter(role=role)
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def student_score(request, student_id):
+    try:
+        student = CustomUser.objects.get(pk=student_id, role='student')
+    except CustomUser.DoesNotExist:
+        return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # ── Workplace Evaluation (40%) ──
+    try:
+        workplace_eval = Evaluation.objects.get(student=student, evaluation_type='workplace')
+        workplace_total = workplace_eval.total_score()
+        workplace_max = 100
+        workplace_contribution = (workplace_total / workplace_max) * 40
+    except Evaluation.DoesNotExist:
+        workplace_total = 0
+        workplace_contribution = 0
