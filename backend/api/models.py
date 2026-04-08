@@ -132,14 +132,12 @@ class Evaluation(models.Model):
         related_name='evaluations',
         limit_choices_to={'role': 'student'}
     )
-
     evaluator = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
         related_name='given_evaluations',
     )
-    score = models.PositiveIntegerField()
-    comments = models.TextField()
+    comments = models.TextField(blank=True, default='')
     evaluation_type = models.CharField(max_length=20, choices=TYPE_CHOICES)
     date = models.DateField(auto_now_add=True)
 
@@ -147,8 +145,10 @@ class Evaluation(models.Model):
         unique_together = ['student', 'evaluator']
 
     def __str__(self):
-        return f"{self.evaluation_type} evaluation for {self.student.full_name} by {self.evaluator.full_name}"
+        return f"{self.evaluation_type} evaluation for {self.student.full_name}"
 
+    def total_score(self):
+        return sum(cs.score for cs in self.criteria_scores.all())
 
 
 
