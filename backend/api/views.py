@@ -242,6 +242,12 @@ def review_list(request):
         serializer = SupervisorReviewSerializer(reviews, many=True)
         return Response(serializer.data)
 
+    if request.method == 'POST':
+        if request.user.role != 'workplace_supervisor':
+            return Response(
+                {'error': 'Only workplace supervisors can review logs'},
+                status=status.HTTP_403_FORBIDDEN
+            )
 
 # ── EVALUATION ──
 @api_view(['GET', 'POST'])
