@@ -89,6 +89,7 @@ const WorkplaceEvaluate = () => {
     return "text-red-400";
   };
 
+  
   const handleScoreChange = (criteria, value, max) => {
     const num = Math.min(Math.max(0, Number(value)), max);
     setCriteriaScores((prev) => ({ ...prev, [criteria]: num }));
