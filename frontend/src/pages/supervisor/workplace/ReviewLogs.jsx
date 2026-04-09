@@ -159,3 +159,40 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
                 ))}
               </div>
             </div>
+{/* Comment */}
+            <div>
+              <p className="text-xs font-medium text-slate-500 mb-2 uppercase tracking-wider">Supervisor Comment</p>
+              <textarea rows={3} placeholder="Add feedback for the student…"
+                value={comment} onChange={(e) => setComment(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#0b1523] border border-[#1e3a5f] text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 transition resize-none" />
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="px-6 py-4 border-t border-[#1a3050] bg-[#0b1523] flex-shrink-0 space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => onSubmit(log, 'rejected', comment, criteriaScores)}
+                disabled={saving}
+                className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 text-sm font-semibold transition disabled:opacity-50">
+                <XCircle className="w-4 h-4" /> Reject
+              </button>
+              <button
+                onClick={() => onSubmit(log, 'reviewed', comment, criteriaScores)}
+                disabled={saving}
+                className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-400 text-sm font-semibold transition disabled:opacity-50">
+                <Eye className="w-4 h-4" /> Mark Reviewed
+              </button>
+            </div>
+            <button
+              onClick={() => onSubmit(log, 'approved', comment, criteriaScores)}
+              disabled={saving}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold transition disabled:opacity-50">
+              <CheckCircle2 className="w-4 h-4" /> Approve Log
+            </button>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+};
