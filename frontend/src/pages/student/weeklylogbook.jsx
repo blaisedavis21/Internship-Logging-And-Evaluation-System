@@ -392,7 +392,7 @@ const WeeklyLogbook = () => {
                   </button>
                 </div>
                 <div className="text-sm text-white/90 space-y-2">
-                  <p><b>Week:</b> {historyLog.weekNumber}</p>
+                  <p><b>Week:</b> {historyLog.week_number}</p>
                   <p><b>Status:</b> {historyLog.status}</p>
                   <p><b>Activities:</b> {historyLog.activities}</p>
                   <p><b>Learned:</b> {historyLog.learnings}</p>
