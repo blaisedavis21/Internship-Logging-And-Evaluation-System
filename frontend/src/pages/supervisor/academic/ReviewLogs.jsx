@@ -68,3 +68,30 @@ const LogDetailPanel = ({ log, onClose }) => (
     </div>
   </div>
 );
+
+const AcademicReviewLogs = () => {
+  const [placements, setPlacements] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedStudentId, setSelectedStudentId] = useState(null);
+  const [selectedLog, setSelectedLog] = useState(null);
+  const [search, setSearch] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [placementsData, logsData] = await Promise.all([
+          apiClient.get('/placements/'),
+          apiClient.get('/logs/'),
+        ]);
+        setPlacements(Array.isArray(placementsData) ? placementsData : []);
+        setLogs(Array.isArray(logsData) ? logsData : []);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
