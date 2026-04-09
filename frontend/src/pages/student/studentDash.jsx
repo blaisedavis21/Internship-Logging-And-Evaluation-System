@@ -114,7 +114,7 @@ const StudentDashboard = () => {
                 </span>
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow mb-2">
-                Welcome, {user?.name?.split(" ")[0] || "Student"}
+                Welcome, {user?.full_name?.split(" ")[0] || "Student"}
               </h1>
               <p className="text-lg text-white/70 font-medium">
                 Your internship progress from live backend data
