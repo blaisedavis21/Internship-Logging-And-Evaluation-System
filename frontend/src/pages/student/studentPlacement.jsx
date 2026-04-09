@@ -23,3 +23,4 @@ const Badge = ({ status }) => {
     </span>
   );
 };
+
