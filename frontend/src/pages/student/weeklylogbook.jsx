@@ -44,7 +44,7 @@ const WeeklyLogbook = () => {
       ]);
 
       setPlacements(placementsData);
-      setLogs(logsData.sort((a, b) => b.weekNumber - a.weekNumber));
+     etLogs(logsData.sort((a, b) => b.week_number - a.week_number));
 
       if (placementsData.length && !form.placement) {
         setForm((prev) => ({ ...prev, placement: String(placementsData[0].id) }));
