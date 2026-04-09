@@ -64,3 +64,14 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
   };
 
   if (!log) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div className="fixed inset-0 z-50 flex"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+        <motion.div className="absolute inset-0 bg-[#07101f]/80 backdrop-blur-sm" onClick={onClose} />
+        <motion.div
+          className="absolute right-0 top-0 bottom-0 w-full max-w-md bg-[#0d1926] border-l border-[#1a3050] shadow-2xl flex flex-col overflow-hidden"
+          initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
+          transition={{ type: "spring", stiffness: 300, damping: 32 }}
+        ></motion.div>
