@@ -241,3 +241,48 @@ const StudentRow = ({ placement, logs, onReview, index }) => {
           <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
         </div>
       </button>
+            <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div key="logs"
+            initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.22 }} className="overflow-hidden">
+            <div className="border-t border-[#1a3050]">
+              {logs.length === 0 ? (
+                <div className="py-8 text-center">
+                  <FileText className="w-6 h-6 text-slate-700 mx-auto mb-2" />
+                  <p className="text-sm text-slate-500">No logs submitted yet.</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-[#122030]">
+                  {logs.map((log) => (
+                    <div key={log.id} className="flex items-center justify-between px-6 py-3.5 hover:bg-white/[0.02] transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-[#122030] border border-[#1a3050] flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs font-bold text-slate-400">W{log.week_number}</span>
+                        </div>
+                        <div>
+                          <p className="text-sm text-slate-300">Week {log.week_number}</p>
+                          <p className="text-xs text-slate-500">{log.date}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <StatusBadge status={log.status} />
+                        {log.status === 'submitted' && (
+                          <button onClick={() => onReview(log)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/10 hover:bg-sky-500/20 border border-sky-500/20 text-sky-400 transition">
+                            <Eye className="w-3 h-3" /> Review
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+};
+
