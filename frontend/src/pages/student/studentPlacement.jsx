@@ -12,6 +12,7 @@ const statusStyles = {
   completed: "bg-cyan-400/20 text-cyan-300 border-cyan-400/30",
 };
 
+
 const StudentPlacement = () => {
   const [placement, setPlacement] = useState(null);
   const [loading, setLoading] = useState(true);
