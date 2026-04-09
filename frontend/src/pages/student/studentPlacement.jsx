@@ -19,7 +19,7 @@ const StudentPlacement = () => {
   const [error, setError] = useState("");
 
 
-  
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -71,7 +71,6 @@ const StudentPlacement = () => {
   const timeline = [
     { label: "Placement Assigned", date: placement.start_date, done: true },
     { label: "Internship Started",  date: placement.start_date, done: placement.status !== 'new' },
-    { label: "Midterm Review",      date: "In Progress",        done: false },
     { label: "Final Evaluation",    date: placement.end_date,   done: placement.status === 'completed' },
   ];
 
