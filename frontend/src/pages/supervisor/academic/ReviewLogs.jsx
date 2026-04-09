@@ -95,3 +95,5 @@ const AcademicReviewLogs = () => {
     };
     loadData();
   }, []);
+
+  const filteredLogs = logs
