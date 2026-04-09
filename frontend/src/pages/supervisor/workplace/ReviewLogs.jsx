@@ -196,3 +196,48 @@ const ReviewDrawer = ({ log, onClose, onSubmit, saving }) => {
     </AnimatePresence>
   );
 };
+
+const StudentRow = ({ placement, logs, onReview, index }) => {
+  const [expanded, setExpanded] = useState(false);
+  const pending = logs.filter((l) => l.status === "submitted").length;
+  const approved = logs.filter((l) => l.status === "approved").length;
+  const progress = logs.length ? Math.round((approved / logs.length) * 100) : 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="rounded-2xl bg-[#0d1926] border border-[#1a3050] overflow-hidden"
+    >
+      <button onClick={() => setExpanded((v) => !v)}
+        className="w-full flex items-center gap-4 px-6 py-4 hover:bg-white/[0.02] transition-colors text-left">
+        <div className="w-10 h-10 rounded-full bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sm font-bold text-sky-300 flex-shrink-0">
+          {(placement.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-white truncate">{placement.student_name}</p>
+          <p className="text-xs text-slate-500 truncate">{placement.company}</p>
+        </div>
+        <div className="hidden sm:block w-28">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-slate-600">Progress</span>
+            <span className="text-xs text-slate-400">{progress}%</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-[#1a3050] overflow-hidden">
+            <div className="h-full rounded-full bg-emerald-500 transition-all duration-700" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="text-center hidden md:block">
+            <p className="text-sm font-bold text-white">{logs.length}</p>
+            <p className="text-xs text-slate-600">logs</p>
+          </div>
+          {pending > 0 && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-300 text-xs font-medium border border-amber-500/30">
+              <AlertCircle className="w-3 h-3" /> {pending}
+            </span>
+          )}
+          <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform duration-200 ${expanded ? "rotate-180" : ""}`} />
+        </div>
+      </button>
