@@ -96,4 +96,15 @@ const AcademicReviewLogs = () => {
     loadData();
   }, []);
 
-  const filteredLogs = logs
+    const filteredPlacements = placements.filter((p) => {
+    const q = search.toLowerCase();
+    return !q || (p.student_name ?? "").toLowerCase().includes(q) || (p.company ?? "").toLowerCase().includes(q);
+  });
+
+  const selectedPlacement = placements.find((p) => p.student === selectedStudentId);
+
+  const studentLogs = logs.filter((l) => {
+    const matchStudent = l.student === selectedStudentId;
+    const matchStatus = filterStatus === "all" || l.status === filterStatus;
+    return matchStudent && matchStatus;
+  });
