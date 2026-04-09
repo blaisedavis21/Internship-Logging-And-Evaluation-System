@@ -107,4 +107,120 @@ const AcademicReviewLogs = () => {
     const matchStudent = l.student === selectedStudentId;
     const matchStatus = filterStatus === "all" || l.status === filterStatus;
     return matchStudent && matchStatus;
-  });
+  });  
+
+   const getStudentLogStats = (studentId) => {
+    const sl = logs.filter((l) => l.student === studentId);
+    return {
+      total: sl.length,
+      approved: sl.filter((l) => l.status === "approved").length,
+      pending: sl.filter((l) => l.status === "submitted").length,
+    };
+  };
+
+  return (
+    <AppLayout>
+      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #f8fafc 100%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-1">
+              <ClipboardCheck size={20} className="text-cyan-600" />
+              <p className="text-xs font-bold text-cyan-600 uppercase tracking-widest">Academic Supervisor</p>
+            </div>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Student Weekly Logs</h1>
+            <p className="text-gray-500 mt-1 text-sm">View your assigned students' logbook entries. Read-only — reviews are handled by the workplace supervisor.</p>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-6">
+
+            {/* Student List */}
+            <div className="w-full lg:w-72 flex-shrink-0 space-y-4">
+              <div className="relative">
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input type="text" placeholder="Search students..."
+                  value={search} onChange={(e) => setSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-200 transition" />
+              </div>
+
+              {loading ? (
+                <p className="text-sm text-gray-400 text-center py-6">Loading...</p>
+              ) : filteredPlacements.length === 0 ? (
+                <p className="text-sm text-gray-400 text-center py-6 italic">No students assigned yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {filteredPlacements.map((p) => {
+                    const stats = getStudentLogStats(p.student);
+                    return (
+                      <button key={p.id} onClick={() => setSelectedStudentId(p.student)}
+                        className={`w-full text-left rounded-2xl border p-4 transition-all ${
+                          selectedStudentId === p.student
+                            ? "bg-white border-cyan-300 shadow-md ring-2 ring-cyan-100"
+                            : "bg-white/70 border-gray-100 hover:border-gray-200 hover:shadow-sm"
+                        }`}>
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                            {(p.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-bold text-gray-900 text-sm truncate">{p.student_name}</p>
+                            <p className="text-xs text-gray-400 truncate flex items-center gap-1">
+                              <Building2 size={10} /> {p.company}
+                            </p>
+                          </div>
+                          {selectedStudentId === p.student && (
+                            <ChevronRight size={14} className="text-cyan-500 ml-auto flex-shrink-0" />
+                          )}
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-100 text-center">
+                          <div>
+                            <p className="text-sm font-bold text-gray-700">{stats.total}</p>
+                            <p className="text-[10px] text-gray-400">Total</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-emerald-600">{stats.approved}</p>
+                            <p className="text-[10px] text-gray-400">Approved</p>
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-amber-500">{stats.pending}</p>
+                            <p className="text-[10px] text-gray-400">Pending</p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Log Table */}
+            <div className="flex-1 min-w-0">
+              {!selectedStudentId ? (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm flex flex-col items-center justify-center py-24 text-center px-8">
+                  <div className="h-16 w-16 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center mb-4">
+                    <User size={28} className="text-cyan-400" />
+                  </div>
+                  <h2 className="text-lg font-bold text-gray-800">Select a Student</h2>
+                  <p className="text-sm text-gray-400 mt-1 max-w-sm">Choose a student from the panel to view their weekly logbook entries.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/* Student Header */}
+                  {selectedPlacement && (
+                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-5 flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                        {(selectedPlacement.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h2 className="text-xl font-extrabold text-gray-900">{selectedPlacement.student_name}</h2>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                          <span className="flex items-center gap-1 text-xs text-gray-400">
+                            <Building2 size={11} /> {selectedPlacement.company}
+                          </span>
+                          <span className="flex items-center gap-1 text-xs text-gray-400">
+                            <BookOpen size={11} /> {selectedPlacement.start_date} → {selectedPlacement.end_date}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
