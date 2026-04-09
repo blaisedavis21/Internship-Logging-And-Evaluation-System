@@ -78,7 +78,7 @@ const WeeklyLogbook = () => {
         ? await internshipService.submitLog(created.id)
         : created;
 
-      setLogs((prev) => [finalLog, ...prev].sort((a, b) => b.weekNumber - a.weekNumber));
+      setLogs((prev) => [finalLog, ...prev].sort((a, b) => b.week_number - a.week_number));
       setShowNew(false);
       setForm((prev) => ({ ...emptyForm, placement: prev.placement }));
     } catch (saveError) {
