@@ -197,7 +197,7 @@ const StudentDashboard = () => {
                   {activePlacement ? (
                     <div className="space-y-3 text-white/90">
                       <p><span className="text-white/60">Company:</span> {activePlacement.company}</p>
-                      <p><span className="text-white/60">Duration:</span> {activePlacement.startDate} - {activePlacement.endDate}</p>
+                      <p><span className="text-white/60">Duration:</span>{activePlacement.start_date} - {activePlacement.end_date}</p>
                       <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${statusStyles[activePlacement.status] || statusStyles.new}`}>
                         {activePlacement.status}
                       </span>
