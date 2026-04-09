@@ -1,734 +1,390 @@
+import { useState, useEffect } from "react";
 import AppLayout from "@/components/AppLayout";
-import { useState } from "react";
+import { apiClient } from "@/lib/apiClient";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  GraduationCap,
-  User,
-  Building2,
-  BookOpen,
-  ChevronDown,
-  CheckCircle2,
-  Send,
-  Star,
-  AlertCircle,
-  ClipboardCheck,
-  RotateCcw,
-  Info,
+  GraduationCap, User, Building2, BookOpen, ChevronDown,
+  CheckCircle2, Send, Star, AlertCircle, ClipboardCheck,
+  RotateCcw, X, Lock,
 } from "lucide-react";
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-const STUDENTS = [
-  {
-    id: "s1",
-    name: "Amara Nakato",
-    regNo: "21/U/0341",
-    company: "MTN Uganda",
-    department: "Network Engineering",
-    avatar: "AN",
-    color: "from-violet-400 to-purple-500",
-    evaluated: false,
-  },
-  {
-    id: "s2",
-    name: "Brian Ssekandi",
-    regNo: "21/U/0892",
-    company: "Stanbic Bank",
-    department: "IT & Digital",
-    avatar: "BS",
-    color: "from-cyan-400 to-blue-500",
-    evaluated: true,
-    prevScore: 78,
-    prevMax: 100,
-  },
-  {
-    id: "s3",
-    name: "Cynthia Auma",
-    regNo: "21/U/1134",
-    company: "Airtel Uganda",
-    department: "Software Development",
-    avatar: "CA",
-    color: "from-emerald-400 to-teal-500",
-    evaluated: false,
-  },
-  {
-    id: "s4",
-    name: "David Ochieng",
-    regNo: "21/U/0567",
-    company: "Dfcu Bank",
-    department: "Systems & Infrastructure",
-    avatar: "DO",
-    color: "from-amber-400 to-orange-500",
-    evaluated: true,
-    prevScore: 85,
-    prevMax: 100,
-  },
-  {
-    id: "s5",
-    name: "Esther Nabirye",
-    regNo: "21/U/0223",
-    company: "Makerere University Hospital",
-    department: "Health Informatics",
-    avatar: "EN",
-    color: "from-rose-400 to-pink-500",
-    evaluated: false,
-  },
-];
-
-// Evaluation rubric — 5 criteria, each out of 20 → total 100
-const CRITERIA = [
-  {
-    id: "c1",
-    label: "Technical Knowledge & Application",
-    description:
-      "Demonstrates understanding of relevant technical concepts and applies them appropriately in the placement environment.",
-    max: 20,
-  },
-  {
-    id: "c2",
-    label: "Log Quality & Consistency",
-    description:
-      "Weekly logs are detailed, accurate, reflective, and submitted on time throughout the placement period.",
-    max: 20,
-  },
-  {
-    id: "c3",
-    label: "Professional Conduct",
-    description:
-      "Student exhibits punctuality, teamwork, communication, and adheres to workplace norms and ethical standards.",
-    max: 20,
-  },
-  {
-    id: "c4",
-    label: "Problem Solving & Initiative",
-    description:
-      "Student identifies challenges independently, proposes solutions, and takes initiative beyond assigned tasks.",
-    max: 20,
-  },
-  {
-    id: "c5",
-    label: "Overall Progress & Learning",
-    description:
-      "Demonstrates measurable growth over the placement duration relative to stated learning objectives.",
-    max: 20,
-  },
+const ACADEMIC_CRITERIA = [
+  { criteria: 'understanding',           label: 'Understanding of Concepts',  max_score: 20, description: 'Demonstrates understanding of relevant technical concepts.' },
+  { criteria: 'documentation',           label: 'Quality of Documentation',   max_score: 20, description: 'Weekly logs are detailed, accurate, and submitted on time.' },
+  { criteria: 'report_writing',          label: 'Report Writing',             max_score: 20, description: 'Student exhibits clear and professional writing in reports.' },
+  { criteria: 'professional_development',label: 'Professional Development',   max_score: 20, description: 'Student demonstrates measurable growth during the placement.' },
+  { criteria: 'academic_progress',       label: 'Academic Progress',          max_score: 20, description: 'Student applies academic knowledge effectively in placement.' },
 ];
 
 const GRADE_MAP = [
   { min: 90, label: "A+", color: "#059669", bg: "#d1fae5" },
-  { min: 80, label: "A", color: "#0891b2", bg: "#cffafe" },
+  { min: 80, label: "A",  color: "#0891b2", bg: "#cffafe" },
   { min: 70, label: "B+", color: "#7c3aed", bg: "#ede9fe" },
-  { min: 60, label: "B", color: "#d97706", bg: "#fef3c7" },
-  { min: 50, label: "C", color: "#ea580c", bg: "#ffedd5" },
-  { min: 0, label: "F", color: "#dc2626", bg: "#fee2e2" },
+  { min: 60, label: "B",  color: "#d97706", bg: "#fef3c7" },
+  { min: 50, label: "C",  color: "#ea580c", bg: "#ffedd5" },
+  { min: 0,  label: "F",  color: "#dc2626", bg: "#fee2e2" },
 ];
 
-const getGrade = (pct) =>
-  GRADE_MAP.find((g) => pct >= g.min) ?? GRADE_MAP.at(-1);
+const getGrade = (pct) => GRADE_MAP.find((g) => pct >= g.min) ?? GRADE_MAP.at(-1);
 
-const ScoreInput = ({ criterion, value, onChange }) => {
-  const pct = value ? Math.round((value / criterion.max) * 100) : 0;
-  const color =
-    pct >= 80
-      ? "#059669"
-      : pct >= 60
-        ? "#d97706"
-        : pct > 0
-          ? "#dc2626"
-          : "#d1d5db";
+const Toast = ({ message, type, onClose }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 40, scale: 0.95 }}
+    animate={{ opacity: 1, y: 0, scale: 1 }}
+    exit={{ opacity: 0, y: 40, scale: 0.95 }}
+    className={`fixed bottom-6 right-6 z-[100] flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-2xl border text-sm font-medium ${
+      type === "success" ? "bg-emerald-950 border-emerald-700 text-emerald-200" : "bg-red-950 border-red-700 text-red-200"
+    }`}
+  >
+    {type === "success"
+      ? <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+      : <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />}
+    {message}
+    <button onClick={onClose} className="ml-2 text-white/40 hover:text-white transition">
+      <X className="w-3.5 h-3.5" />
+    </button>
+  </motion.div>
+);
 
-  return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-      <div className="px-5 py-4 border-b border-gray-50">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-gray-800">{criterion.label}</p>
-            <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">
-              {criterion.description}
-            </p>
-          </div>
-          <div className="flex-shrink-0 text-right">
-            <span className="text-xs text-gray-400 font-medium">Max</span>
-            <p className="text-sm font-bold text-gray-500">{criterion.max}</p>
-          </div>
-        </div>
-      </div>
-      <div className="px-5 py-4 flex items-center gap-4">
-        {/* Slider */}
-        <div className="flex-1 relative">
-          <input
-            type="range"
-            min={0}
-            max={criterion.max}
-            value={value ?? 0}
-            onChange={(e) => onChange(Number(e.target.value))}
-            className="w-full h-2 rounded-full appearance-none cursor-pointer"
-            style={{
-              background: `linear-gradient(to right, ${color} ${pct}%, #e5e7eb ${pct}%)`,
-              accentColor: color,
-            }}
-          />
-          <div className="flex justify-between mt-1">
-            <span className="text-[10px] text-gray-300">0</span>
-            <span className="text-[10px] text-gray-300">
-              {criterion.max / 2}
-            </span>
-            <span className="text-[10px] text-gray-300">{criterion.max}</span>
-          </div>
-        </div>
-        {/* Number input */}
-        <div className="flex-shrink-0 flex items-center gap-1">
-          <input
-            type="number"
-            min={0}
-            max={criterion.max}
-            value={value ?? ""}
-            placeholder="—"
-            onChange={(e) => {
-              const v = Math.min(
-                criterion.max,
-                Math.max(0, Number(e.target.value)),
-              );
-              onChange(v);
-            }}
-            className="w-14 text-center text-sm font-bold rounded-xl border border-gray-200 bg-gray-50 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-400 transition"
-            style={{ color }}
-          />
-          <span className="text-xs text-gray-400">/ {criterion.max}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Avatar = ({ initials, color, size = "md" }) => {
-  const sz =
-    size === "sm"
-      ? "h-8 w-8 text-xs"
-      : size === "lg"
-        ? "h-14 w-14 text-base"
-        : "h-10 w-10 text-sm";
-  return (
-    <div
-      className={`${sz} rounded-full bg-gradient-to-br ${color} flex items-center justify-center text-white font-bold flex-shrink-0 shadow-sm`}
-    >
-      {initials}
-    </div>
-  );
-};
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
 const AcademicEvaluate = () => {
-  const [selectedId, setSelectedId] = useState("");
-  const [scores, setScores] = useState({});
-  const [comment, setComment] = useState("");
-  const [recommendation, setRecommendation] = useState("");
+  const [placements, setPlacements] = useState([]);
+  const [existingEvals, setExistingEvals] = useState([]);
+  const [studentLogs, setStudentLogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedStudentId, setSelectedStudentId] = useState("");
+  const [criteriaScores, setCriteriaScores] = useState(
+    Object.fromEntries(ACADEMIC_CRITERIA.map((c) => [c.criteria, 0]))
+  );
+  const [comments, setComments] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [toast, setToast] = useState(null);
+  const [showLogs, setShowLogs] = useState(false);
 
-  const student = STUDENTS.find((s) => s.id === selectedId);
-  const totalMax = CRITERIA.reduce((a, c) => a + c.max, 0);
-  const totalScore = CRITERIA.reduce((a, c) => a + (scores[c.id] ?? 0), 0);
-  const pct = Math.round((totalScore / totalMax) * 100);
+  const showToast = (msg, type = "success") => {
+    setToast({ message: msg, type });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [placementsData, evalsData] = await Promise.all([
+          apiClient.get('/placements/'),
+          apiClient.get('/evaluations/'),
+        ]);
+        setPlacements(Array.isArray(placementsData) ? placementsData : []);
+        setExistingEvals(Array.isArray(evalsData) ? evalsData : []);
+        if (placementsData.length > 0) {
+          setSelectedStudentId(String(placementsData[0].student));
+        }
+      } catch (err) {
+        showToast(err.message || 'Failed to load data.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
+
+  // Load logs when student changes
+  useEffect(() => {
+    const loadLogs = async () => {
+      if (!selectedStudentId) return;
+      try {
+        const logsData = await apiClient.get('/logs/');
+        const filtered = Array.isArray(logsData)
+          ? logsData.filter((l) => String(l.student) === String(selectedStudentId))
+          : [];
+        setStudentLogs(filtered);
+      } catch (err) {
+        setStudentLogs([]);
+      }
+    };
+    loadLogs();
+  }, [selectedStudentId]);
+
+  const selectedPlacement = placements.find((p) => String(p.student) === String(selectedStudentId));
+
+  const alreadyEvaluated = existingEvals.some(
+    (e) => String(e.student) === String(selectedStudentId) && e.evaluation_type === 'academic'
+  );
+
+  const totalScore = Object.values(criteriaScores).reduce((a, b) => a + Number(b), 0);
+  const maxTotal = ACADEMIC_CRITERIA.reduce((a, c) => a + c.max_score, 0);
+  const pct = Math.round((totalScore / maxTotal) * 100);
   const grade = getGrade(pct);
-  const allFilled = CRITERIA.every((c) => scores[c.id] !== undefined);
 
-  const handleScore = (id, val) => {
-    setScores((prev) => ({ ...prev, [id]: val }));
-    setErrors((prev) => ({ ...prev, [id]: false }));
+  const handleScoreChange = (criteria, value, max) => {
+    const num = Math.min(Math.max(0, Number(value)), max);
+    setCriteriaScores((prev) => ({ ...prev, [criteria]: num }));
   };
 
   const handleReset = () => {
-    setScores({});
-    setComment("");
-    setRecommendation("");
-    setErrors({});
+    setCriteriaScores(Object.fromEntries(ACADEMIC_CRITERIA.map((c) => [c.criteria, 0])));
+    setComments("");
     setSubmitted(false);
   };
 
-  const handleSubmit = () => {
-    const newErrors = {};
-    let hasError = false;
-    if (!selectedId) {
-      newErrors.student = true;
-      hasError = true;
+  const handleSubmit = async () => {
+    if (!selectedStudentId) { showToast("Please select a student.", "error"); return; }
+    if (alreadyEvaluated) { showToast("Already evaluated this student.", "error"); return; }
+    if (!comments.trim()) { showToast("Please add comments.", "error"); return; }
+
+    setSubmitting(true);
+    try {
+      await apiClient.post('/evaluations/', {
+        student: Number(selectedStudentId),
+        comments,
+        evaluation_type: 'academic',
+        criteria_scores: ACADEMIC_CRITERIA.map((c) => ({
+          criteria: c.criteria,
+          score: Number(criteriaScores[c.criteria]),
+        })),
+      });
+      setSubmitted(true);
+      setExistingEvals((prev) => [...prev, { student: Number(selectedStudentId), evaluation_type: 'academic' }]);
+      showToast(`Evaluation for ${selectedPlacement?.student_name} submitted successfully.`);
+    } catch (err) {
+      showToast(err.message || 'Failed to submit evaluation.', 'error');
+    } finally {
+      setSubmitting(false);
     }
-    CRITERIA.forEach((c) => {
-      if (scores[c.id] === undefined) {
-        newErrors[c.id] = true;
-        hasError = true;
-      }
-    });
-    if (!comment.trim()) {
-      newErrors.comment = true;
-      hasError = true;
+  };
+
+  const getLogStatusStyle = (status) => {
+    switch (status) {
+      case 'approved':  return 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+      case 'submitted': return 'bg-amber-100 text-amber-700 border border-amber-200';
+      case 'reviewed':  return 'bg-sky-100 text-sky-700 border border-sky-200';
+      case 'rejected':  return 'bg-red-100 text-red-700 border border-red-200';
+      default:          return 'bg-gray-100 text-gray-600 border border-gray-200';
     }
-    if (!recommendation) {
-      newErrors.recommendation = true;
-      hasError = true;
-    }
-    if (hasError) {
-      setErrors(newErrors);
-      return;
-    }
-    setSubmitted(true);
   };
 
   return (
     <AppLayout>
-      <div
-        className="min-h-screen"
-        style={{
-          background:
-            "linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #f8fafc 100%)",
-          fontFamily: "'DM Sans', 'Segoe UI', system-ui, sans-serif",
-        }}
-      >
+      <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #ecfeff 50%, #f8fafc 100%)", fontFamily: "'DM Sans', system-ui, sans-serif" }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10 space-y-6">
-          {/* ── Page Header ─────────────────────────────────── */}
+
+          {/* Header */}
           <div>
             <div className="flex items-center gap-2 mb-1">
               <ClipboardCheck size={18} className="text-cyan-600" />
-              <p className="text-xs font-bold text-cyan-600 uppercase tracking-widest">
-                Academic Supervisor
-              </p>
+              <p className="text-xs font-bold text-cyan-600 uppercase tracking-widest">Academic Supervisor</p>
             </div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
-              Academic Evaluation
-            </h1>
-            <p className="text-gray-500 text-sm mt-1">
-              Score each criterion and provide a comprehensive comment for the
-              student's placement evaluation.
-            </p>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Academic Evaluation</h1>
+            <p className="text-gray-500 text-sm mt-1">Review the student's logs then score each criterion to submit an academic evaluation.</p>
           </div>
 
-          {/* ── Success State ────────────────────────────────── */}
+          {/* Success State */}
           {submitted ? (
             <div className="bg-white rounded-2xl border border-emerald-200 shadow-sm px-8 py-12 flex flex-col items-center text-center gap-4">
               <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
                 <CheckCircle2 size={32} className="text-emerald-500" />
               </div>
               <div>
-                <h2 className="text-xl font-extrabold text-gray-900">
-                  Evaluation Submitted
-                </h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  {student?.name}'s evaluation has been recorded successfully.
-                </p>
+                <h2 className="text-xl font-extrabold text-gray-900">Evaluation Submitted</h2>
+                <p className="text-sm text-gray-500 mt-1">{selectedPlacement?.student_name}'s evaluation has been recorded.</p>
               </div>
-              {/* Score summary */}
-              <div
-                className="w-full max-w-sm rounded-2xl px-6 py-5 flex flex-col items-center gap-1 mt-2"
-                style={{ background: grade.bg }}
-              >
-                <p
-                  className="text-xs font-semibold uppercase tracking-widest"
-                  style={{ color: grade.color }}
-                >
-                  Final Grade
-                </p>
-                <p
-                  className="text-5xl font-extrabold"
-                  style={{ color: grade.color }}
-                >
-                  {grade.label}
-                </p>
-                <p className="text-sm font-bold text-gray-700">
-                  {totalScore} / {totalMax} &nbsp;·&nbsp; {pct}%
-                </p>
+              <div className="w-full max-w-sm rounded-2xl px-6 py-5 flex flex-col items-center gap-1 mt-2" style={{ background: grade.bg }}>
+                <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: grade.color }}>Final Grade</p>
+                <p className="text-5xl font-extrabold" style={{ color: grade.color }}>{grade.label}</p>
+                <p className="text-sm font-bold text-gray-700">{totalScore} / {maxTotal} · {pct}%</p>
               </div>
-              <div className="w-full max-w-sm space-y-2 text-left mt-2">
-                {CRITERIA.map((c) => (
-                  <div
-                    key={c.id}
-                    className="flex items-center justify-between text-sm"
-                  >
-                    <span className="text-gray-600 truncate pr-2">
-                      {c.label}
-                    </span>
-                    <span className="font-bold text-gray-800 flex-shrink-0">
-                      {scores[c.id]} / {c.max}
-                    </span>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => {
-                  setSelectedId("");
-                  handleReset();
-                }}
-                className="mt-4 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition shadow"
-              >
+              <button onClick={() => { setSelectedStudentId(""); handleReset(); }}
+                className="mt-4 flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold transition">
                 <RotateCcw size={14} /> Evaluate Another Student
               </button>
             </div>
           ) : (
             <>
-              {/* ── Student Selector ─────────────────────────── */}
-              <div
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
-                style={{
-                  borderTop: errors.student
-                    ? "3px solid #ef4444"
-                    : "3px solid #0891b2",
-                }}
-              >
+              {/* Student Selector */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #0891b2" }}>
                 <div className="px-6 py-5">
                   <div className="flex items-center gap-2 mb-4">
                     <User size={15} className="text-cyan-600" />
-                    <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">
-                      Student
-                    </h2>
-                    <span className="text-rose-400 text-xs">*</span>
+                    <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Student</h2>
                   </div>
-
                   <div className="relative">
-                    <select
-                      value={selectedId}
-                      onChange={(e) => {
-                        setSelectedId(e.target.value);
-                        handleReset();
-                        setErrors((prev) => ({ ...prev, student: false }));
-                      }}
-                      className={`w-full appearance-none pr-10 pl-4 py-3 text-sm rounded-xl border bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-400 transition font-medium text-black ${
-                        errors.student
-                          ? "border-rose-300 bg-rose-50"
-                          : "border-gray-200"
-                      }`}
-                      style={{ color: "#111" }}
-                    >
-                      <option
-                        value=""
-                        className="text-black"
-                        style={{ color: "#111" }}
-                      >
-                        — Select a student —
-                      </option>
-                      {STUDENTS.map((s) => (
-                        <option
-                          key={s.id}
-                          value={s.id}
-                          className="text-black"
-                          style={{ color: "#111" }}
-                        >
-                          {s.name} ({s.regNo}) — {s.company}
+                    <select value={selectedStudentId}
+                      onChange={(e) => { setSelectedStudentId(e.target.value); handleReset(); }}
+                      disabled={loading}
+                      className="w-full appearance-none pr-10 pl-4 py-3 text-sm rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-400 transition font-medium text-black disabled:opacity-50">
+                      <option value="">— Select a student —</option>
+                      {placements.map((p) => (
+                        <option key={p.id} value={String(p.student)}>
+                          {p.student_name} — {p.company}
                         </option>
                       ))}
                     </select>
-                    <ChevronDown
-                      size={15}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                    />
+                    <ChevronDown size={15} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   </div>
 
-                  {errors.student && (
-                    <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1">
-                      <AlertCircle size={11} /> Please select a student.
-                    </p>
-                  )}
-
-                  {/* Student Info Card */}
-                  {student && (
+                  {selectedPlacement && (
                     <div className="mt-4 flex items-center gap-4 bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                      <Avatar
-                        initials={student.avatar}
-                        color={student.color}
-                        size="lg"
-                      />
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                        {(selectedPlacement.student_name ?? "?").split(" ").map((n) => n[0]).join("").slice(0, 2)}
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-extrabold text-gray-900">
-                          {student.name}
-                        </p>
+                        <p className="font-extrabold text-gray-900">{selectedPlacement.student_name}</p>
                         <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-0.5">
                           <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <BookOpen size={10} /> {student.regNo}
-                          </span>
-                          <span className="flex items-center gap-1 text-xs text-gray-400">
-                            <Building2 size={10} /> {student.company} —{" "}
-                            {student.department}
+                            <Building2 size={10} /> {selectedPlacement.company}
                           </span>
                         </div>
                       </div>
-                      {student.evaluated && (
-                        <div className="flex-shrink-0 text-right">
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg bg-amber-100 text-amber-700 border border-amber-200">
-                            <Info size={10} /> Previously evaluated
-                          </span>
-                          <p className="text-xs text-gray-400 mt-1">
-                            Score: {student.prevScore}/{student.prevMax}
-                          </p>
-                        </div>
+                      {alreadyEvaluated && (
+                        <span className="flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg bg-emerald-100 text-emerald-700 border border-emerald-200">
+                          <Lock size={10} /> Already evaluated
+                        </span>
                       )}
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* ── Scoring Criteria ─────────────────────────── */}
-              <div
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
-                style={{ borderTop: "3px solid #7c3aed" }}
-              >
+              {/* Student Logs — Read Only */}
+              {selectedStudentId && studentLogs.length > 0 && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #f59e0b" }}>
+                  <button onClick={() => setShowLogs(!showLogs)}
+                    className="w-full px-6 py-4 flex items-center justify-between text-left">
+                    <div className="flex items-center gap-2">
+                      <BookOpen size={15} className="text-amber-500" />
+                      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Student Logs ({studentLogs.length})</h2>
+                      <span className="text-xs text-gray-400">— read only, for reference</span>
+                    </div>
+                    <ChevronDown size={15} className={`text-gray-400 transition-transform ${showLogs ? "rotate-180" : ""}`} />
+                  </button>
+                  {showLogs && (
+                    <div className="px-6 pb-5 space-y-3">
+                      {studentLogs.map((log) => (
+                        <div key={log.id} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm font-bold text-gray-800">Week {log.week_number}</p>
+                            <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${getLogStatusStyle(log.status)}`}>
+                              {log.status}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 mb-1"><span className="font-semibold">Activities:</span> {log.activities}</p>
+                          <p className="text-xs text-gray-500 mb-1"><span className="font-semibold">Learnings:</span> {log.learnings}</p>
+                          <p className="text-xs text-gray-500"><span className="font-semibold">Challenges:</span> {log.challenges}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Criteria Scores */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #7c3aed" }}>
                 <div className="px-6 py-5">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                       <Star size={15} className="text-violet-500" />
-                      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">
-                        Scoring Rubric
-                      </h2>
-                      <span className="text-rose-400 text-xs">*</span>
+                      <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Scoring Rubric</h2>
                     </div>
-                    <span className="text-xs text-gray-400">
-                      Each criterion is out of 20 pts
-                    </span>
+                    <span className="text-xs text-gray-400">Each criterion out of 20 pts</span>
                   </div>
-                  <p className="text-xs text-gray-400 mb-5">
-                    Adjust the slider or type a value for each criterion below.
-                  </p>
 
-                  <div className="space-y-3">
-                    {CRITERIA.map((c) => (
-                      <div key={c.id}>
-                        <ScoreInput
-                          criterion={c}
-                          value={scores[c.id]}
-                          onChange={(v) => handleScore(c.id, v)}
-                        />
-                        {errors[c.id] && (
-                          <p className="text-xs text-rose-500 mt-1 flex items-center gap-1 px-1">
-                            <AlertCircle size={10} /> This field is required.
-                          </p>
-                        )}
+                  <div className="space-y-5">
+                    {ACADEMIC_CRITERIA.map((c) => (
+                      <div key={c.criteria}>
+                        <div className="flex items-start justify-between mb-1">
+                          <div>
+                            <p className="text-sm font-bold text-gray-800">{c.label}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">{c.description}</p>
+                          </div>
+                          <span className="text-xs text-gray-400 ml-4 flex-shrink-0">{criteriaScores[c.criteria]}/{c.max_score}</span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-2">
+                          <input type="range" min={0} max={c.max_score}
+                            value={criteriaScores[c.criteria]}
+                            onChange={(e) => handleScoreChange(c.criteria, e.target.value, c.max_score)}
+                            disabled={alreadyEvaluated}
+                            className="flex-1 accent-cyan-600 disabled:opacity-50" />
+                          <input type="number" min={0} max={c.max_score}
+                            value={criteriaScores[c.criteria]}
+                            onChange={(e) => handleScoreChange(c.criteria, e.target.value, c.max_score)}
+                            disabled={alreadyEvaluated}
+                            className="w-14 text-center text-sm font-bold rounded-xl border border-gray-200 bg-gray-50 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-200 disabled:opacity-50" />
+                        </div>
+                        <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden mt-1.5">
+                          <div className="h-full rounded-full bg-cyan-500 transition-all duration-300"
+                            style={{ width: `${(criteriaScores[c.criteria] / c.max_score) * 100}%` }} />
+                        </div>
                       </div>
                     ))}
                   </div>
 
                   {/* Live Score Summary */}
-                  {Object.keys(scores).length > 0 && (
-                    <div
-                      className="mt-5 rounded-2xl px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4"
-                      style={{ background: grade.bg }}
-                    >
-                      <div className="flex-1">
-                        <p
-                          className="text-xs font-semibold uppercase tracking-wider mb-2"
-                          style={{ color: grade.color }}
-                        >
-                          Running Score
-                        </p>
-                        <div className="h-2 rounded-full bg-white/60 overflow-hidden">
-                          <div
-                            className="h-full rounded-full transition-all duration-500"
-                            style={{
-                              width: `${pct}%`,
-                              background: grade.color,
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="text-right flex-shrink-0">
-                        <p
-                          className="text-3xl font-extrabold"
-                          style={{ color: grade.color }}
-                        >
-                          {totalScore}
-                          <span className="text-base font-medium text-gray-500">
-                            {" "}
-                            / {totalMax}
-                          </span>
-                        </p>
-                        <p
-                          className="text-xs font-bold"
-                          style={{ color: grade.color }}
-                        >
-                          {pct}% &nbsp;·&nbsp; Grade {grade.label}
-                        </p>
+                  <div className="mt-5 rounded-2xl px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4" style={{ background: grade.bg }}>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: grade.color }}>Running Score</p>
+                      <div className="h-2 rounded-full bg-white/60 overflow-hidden">
+                        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: grade.color }} />
                       </div>
                     </div>
-                  )}
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-3xl font-extrabold" style={{ color: grade.color }}>
+                        {totalScore}<span className="text-base font-medium text-gray-500"> / {maxTotal}</span>
+                      </p>
+                      <p className="text-xs font-bold" style={{ color: grade.color }}>{pct}% · Grade {grade.label}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* ── Comments & Recommendation ─────────────────── */}
-              <div
-                className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
-                style={{ borderTop: "3px solid #059669" }}
-              >
-                <div className="px-6 py-5 space-y-5">
-                  <div className="flex items-center gap-2">
+              {/* Comments */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" style={{ borderTop: "3px solid #059669" }}>
+                <div className="px-6 py-5">
+                  <div className="flex items-center gap-2 mb-4">
                     <ClipboardCheck size={15} className="text-emerald-600" />
-                    <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">
-                      Supervisor Comments & Recommendation
-                    </h2>
+                    <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Overall Comment</h2>
                   </div>
-
-                  {/* General Comment */}
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Overall Comment <span className="text-rose-400">*</span>
-                    </label>
-                    <textarea
-                      rows={5}
-                      value={comment}
-                      onChange={(e) => {
-                        setComment(e.target.value);
-                        setErrors((p) => ({ ...p, comment: false }));
-                      }}
-                      placeholder="Provide a comprehensive assessment of the student's performance, attitude, and growth during the placement period..."
-                      className={`w-full text-sm rounded-xl border px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-200 focus:border-cyan-400 transition bg-gray-50 leading-relaxed ${
-                        errors.comment
-                          ? "border-rose-300 bg-rose-50"
-                          : "border-gray-200"
-                      }`}
-                    />
-                    {errors.comment && (
-                      <p className="text-xs text-rose-500 mt-1 flex items-center gap-1">
-                        <AlertCircle size={10} /> Please provide an overall
-                        comment.
-                      </p>
-                    )}
-                    <p className="text-right text-xs text-gray-300 mt-1">
-                      {comment.length} characters
-                    </p>
-                  </div>
-
-                  {/* Recommendation */}
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-2">
-                      Recommendation <span className="text-rose-400">*</span>
-                    </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      {[
-                        {
-                          value: "pass",
-                          label: "Pass",
-                          desc: "Student met all objectives",
-                          color: "#059669",
-                          bg: "#d1fae5",
-                          border: "#a7f3d0",
-                        },
-                        {
-                          value: "conditional",
-                          label: "Conditional Pass",
-                          desc: "Minor gaps to address",
-                          color: "#d97706",
-                          bg: "#fef3c7",
-                          border: "#fde68a",
-                        },
-                        {
-                          value: "fail",
-                          label: "Fail",
-                          desc: "Objectives not met",
-                          color: "#dc2626",
-                          bg: "#fee2e2",
-                          border: "#fca5a5",
-                        },
-                      ].map((opt) => (
-                        <button
-                          key={opt.value}
-                          type="button"
-                          onClick={() => {
-                            setRecommendation(opt.value);
-                            setErrors((p) => ({ ...p, recommendation: false }));
-                          }}
-                          className={`rounded-xl border-2 px-4 py-3 text-left transition-all ${
-                            recommendation === opt.value
-                              ? "shadow-md"
-                              : "border-gray-100 bg-white hover:border-gray-200"
-                          }`}
-                          style={
-                            recommendation === opt.value
-                              ? { borderColor: opt.border, background: opt.bg }
-                              : {}
-                          }
-                        >
-                          <p
-                            className="text-sm font-bold"
-                            style={{
-                              color:
-                                recommendation === opt.value
-                                  ? opt.color
-                                  : "#374151",
-                            }}
-                          >
-                            {opt.label}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-0.5">
-                            {opt.desc}
-                          </p>
-                        </button>
-                      ))}
-                    </div>
-                    {errors.recommendation && (
-                      <p className="text-xs text-rose-500 mt-1.5 flex items-center gap-1">
-                        <AlertCircle size={10} /> Please select a
-                        recommendation.
-                      </p>
-                    )}
-                  </div>
+                  <textarea rows={5} value={comments}
+                    onChange={(e) => setComments(e.target.value)}
+                    disabled={alreadyEvaluated}
+                    placeholder="Provide a comprehensive assessment of the student's academic performance, attitude, and growth during the placement..."
+                    className="w-full text-sm rounded-xl border border-gray-200 px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-cyan-200 bg-gray-50 leading-relaxed disabled:opacity-50" />
+                  <p className="text-right text-xs text-gray-300 mt-1">{comments.length} characters</p>
                 </div>
               </div>
 
-              {/* ── Validation Summary ───────────────────────── */}
-              {Object.values(errors).some(Boolean) && (
-                <div className="flex items-start gap-3 bg-rose-50 border border-rose-200 rounded-xl px-5 py-4">
-                  <AlertCircle
-                    size={16}
-                    className="text-rose-500 flex-shrink-0 mt-0.5"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold text-rose-800">
-                      Please fix the errors above before submitting.
-                    </p>
-                    <p className="text-xs text-rose-500 mt-0.5">
-                      All fields marked with * are required.
-                    </p>
+              {/* Submit Bar */}
+              {!alreadyEvaluated && (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 flex flex-col sm:flex-row items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    {selectedPlacement ? (
+                      <p className="text-sm font-semibold text-gray-800">
+                        Submitting evaluation for <span className="text-cyan-700">{selectedPlacement.student_name}</span>
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic">No student selected.</p>
+                    )}
+                    <p className="text-xs text-gray-400 mt-0.5">Score: {totalScore}/{maxTotal} · Grade {grade.label} · {pct}%</p>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <button onClick={handleReset}
+                      className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-600 text-sm font-semibold hover:bg-gray-50 transition">
+                      <RotateCcw size={13} /> Reset
+                    </button>
+                    <button onClick={handleSubmit} disabled={submitting || !selectedStudentId}
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white text-sm font-bold transition shadow disabled:opacity-50"
+                      style={{ background: "linear-gradient(120deg, #0891b2, #059669)" }}>
+                      <Send size={14} /> {submitting ? "Submitting..." : "Submit Evaluation"}
+                    </button>
                   </div>
                 </div>
               )}
-
-              {/* ── Submit Bar ───────────────────────────────── */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-6 py-4 flex flex-col sm:flex-row items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  {student ? (
-                    <p className="text-sm font-semibold text-gray-800">
-                      Submitting evaluation for{" "}
-                      <span className="text-cyan-700">{student.name}</span>
-                    </p>
-                  ) : (
-                    <p className="text-sm text-gray-400 italic">
-                      No student selected.
-                    </p>
-                  )}
-                  {allFilled && student && (
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      Score: {totalScore}/{totalMax} · Grade {grade.label} ·{" "}
-                      {pct}%
-                    </p>
-                  )}
-                </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={handleReset}
-                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-600 text-sm font-semibold hover:bg-gray-50 transition"
-                  >
-                    <RotateCcw size={13} /> Reset
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl text-white text-sm font-bold transition shadow"
-                    style={{
-                      background: "linear-gradient(120deg, #0891b2, #059669)",
-                    }}
-                  >
-                    <Send size={14} /> Submit Evaluation
-                  </button>
-                </div>
-              </div>
             </>
           )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {toast && <Toast key="toast" message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      </AnimatePresence>
     </AppLayout>
   );
 };
