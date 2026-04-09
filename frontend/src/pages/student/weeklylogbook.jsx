@@ -92,7 +92,7 @@ const WeeklyLogbook = () => {
     setEditLog(log);
     setEditForm({
       placement: String(log.placement),
-      week_number: String(log.weekNumber),
+      week_number: String(log.week_number),
       date: log.date || "",
       activities: log.activities || "",
       learnings: log.learnings || "",
