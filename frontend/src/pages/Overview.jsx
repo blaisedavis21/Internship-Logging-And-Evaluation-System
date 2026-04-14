@@ -63,16 +63,7 @@ const sections = [
       </ul>
     ),
   },
-  {
-    title: "Technology Stack",
-    content:
-      "Frontend: React + Tailwind CSS + GSAP | Backend: Django + DRF | Database: PostgreSQL | Auth: JWT | Charts: Recharts",
-  },
-  {
-    title: "Lecturer & Course",
-    content:
-      "CSC 1202: Software Development Project (2026) | Lecturer: Dr. Peter Khisa Wakholi (pwakholi@cit.ac.ug)",
-  },
+  
 ];
 
 const Overview = () => {
