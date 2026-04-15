@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (identifier, password) => {
   try {
-    const data = await apiClient.post('/auth/login/', { identifier, password });
+    const data = await apiClient.post('/auth/login/', { identifier, password }, { requiresAuth: false });
     setUser(data.user);
     setIsAuthenticated(true);
     localStorage.setItem('access_token', data.access);
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     if (role === 'student' && studentNumber) {
       payload.student_number = studentNumber;
     }
-    const data = await apiClient.post('/auth/register/', payload);
+    const data = await apiClient.post('/auth/register/', payload, { requiresAuth: false });
     setUser(data.user);
     setIsAuthenticated(true);
     localStorage.setItem('access_token', data.access);
