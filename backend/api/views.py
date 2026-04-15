@@ -104,6 +104,22 @@ def get_current_user(request):
         user = authenticate(request, username=user_by_student_number.username, password=password)
     except CustomUser.DoesNotExist:
         pass
+    
+    # Try email if student number didn't work
+    if user is None:
+        try:
+            user_by_email = CustomUser.objects.get(email=identifier)
+            user = authenticate(request, username=user_by_email.username, password=password)
+        except CustomUser.DoesNotExist:
+            pass
+
+    if user is None:
+        return Response(
+            {'error': 'Invalid credentials'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+
 
 @api_view(['GET', 'POST'])
 def placement_list(request):
