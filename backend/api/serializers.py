@@ -30,7 +30,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'full_name', 'email', 'role']
+        fields = ['id', 'full_name', 'email', 'student_number', 'role']
         read_only_fields = ['email']
 
 class InternshipPlacementSerializer(serializers.ModelSerializer):
