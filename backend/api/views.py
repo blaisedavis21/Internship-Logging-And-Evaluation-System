@@ -118,6 +118,13 @@ def get_current_user(request):
             {'error': 'Invalid credentials'},
             status=status.HTTP_401_UNAUTHORIZED
         )
+    
+    refresh = RefreshToken.for_user(user)
+    return Response({
+        'user': UserSerializer(user).data,
+        'access': str(refresh.access_token),
+        'refresh': str(refresh),
+    })
 
 
 
