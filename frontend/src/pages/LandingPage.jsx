@@ -16,7 +16,6 @@ try { gsap.registerPlugin(SplitText); } catch (_) {}
    Obsidian bg · Gold accent · Serif wordmarks
    Every animation has a deliberate reason.
 ───────────────────────────────────────────── */
-
 const FEATURES = [
   { icon: "⬡", text: "Role-based dashboards — Student, Supervisor, Academic, Admin" },
   { icon: "⬡", text: "Secure authentication with full RBAC" },
