@@ -167,26 +167,28 @@ const SignUp = () => {
               className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]" />
           </div>
 
-          {/* Student Number */}
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            className="flex flex-col gap-1.5"
-          >
-            <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
-              Student Number {selectedRole === "student" && <span className="text-yellow-400">*</span>}
-            </label>
-            <input
-              type="text"
-              value={studentNumber}
-              onChange={(e) => setStudentNumber(e.target.value)}
-              placeholder={selectedRole === "student" ? "e.g. 24/U/0763" : "Required for students"}
-              className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition placeholder:text-slate-600 focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
-            />
-            <p className="text-[0.65rem] text-slate-500">
-              Required for student accounts.
-            </p>
-          </motion.div>
+          {/* Student Number - student role only */}
+          {selectedRole === "student" && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="flex flex-col gap-1.5"
+            >
+              <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
+                Student Number <span className="text-yellow-400">*</span>
+              </label>
+              <input
+                type="text"
+                value={studentNumber}
+                onChange={(e) => setStudentNumber(e.target.value)}
+                placeholder="e.g. 24/U/0763"
+                className="w-full rounded-xl border border-slate-400/40 bg-slate-950 px-4 py-3 text-sm text-slate-50 outline-none transition placeholder:text-slate-600 focus:-translate-y-px focus:border-yellow-400/90 focus:shadow-[0_0_0_1px_rgba(250,204,21,0.6)]"
+              />
+              <p className="text-[0.65rem] text-slate-500">
+                Required for student accounts.
+              </p>
+            </motion.div>
+          )}
 
           {/* Password */}
           <div className="flex flex-col gap-1.5">
