@@ -174,6 +174,7 @@ const SignUp = () => {
               animate={{ opacity: 1, height: "auto" }}
               className="flex flex-col gap-1.5"
             >
+              
               <label className="text-[0.7rem] font-bold uppercase tracking-[0.18em] text-slate-400">
                 Student Number <span className="text-yellow-400">*</span>
               </label>
